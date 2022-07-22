@@ -1,7 +1,7 @@
-import { Button, Group, Space, Text, useMantineTheme } from '@mantine/core';
+import { Button, Group, Space, Stack, Text, useMantineTheme } from '@mantine/core';
+import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
 
 export function HomePage() {
     const { user } = useAuth();
@@ -10,26 +10,40 @@ export function HomePage() {
 
     return (
         <>
-            <Text size="xl">Your id: {user.id}</Text>
-            <Space h="md" />
+            <Stack align="center">
+                <Group spacing={6}>
+                    <Text size="xl">Your id: </Text>
+                    <Text size="xl" color={theme.primaryColor}>
+                        {user.id}
+                    </Text>
+                </Group>
 
-            <Group spacing={6}>
-                <Text color={theme.primaryColor}>Keep it</Text>
-                <Text>because it acts as an identifier for your "account".</Text>
-            </Group>
-            <Text>This id allows you to keep the history of the images that have been shown to you.</Text>
+                <Stack align="center" spacing={0}>
+                    <Group spacing={6}>
+                        <Text weight={700} color={theme.primaryColor}>
+                            Keep it
+                        </Text>
+                        <Text>because it acts as an identifier for your "account".</Text>
+                    </Group>
+                    <Text>This id allows you to keep the history of the images that have been shown to you.</Text>
+                </Stack>
 
-            <Space h="xl" />
-
-            <Group>
-                <Button
-                    color={theme.primaryColor}
-                    onClick={() => {
-                        navigate('/app/template-one');
-                    }}>
-                    Template One
-                </Button>
-            </Group>
+                <Group>
+                    {[
+                        ['template-one', 'Demo One'],
+                        ['template-two', 'Demo Two'],
+                    ].map((btnArray, index) => (
+                        <Button
+                            key={index}
+                            color={theme.primaryColor}
+                            onClick={() => {
+                                navigate('/app/' + btnArray[0]);
+                            }}>
+                            {btnArray[1]}
+                        </Button>
+                    ))}
+                </Group>
+            </Stack>
         </>
     );
 }

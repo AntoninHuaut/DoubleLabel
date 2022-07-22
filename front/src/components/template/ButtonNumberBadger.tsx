@@ -46,26 +46,7 @@ export function ButtonNumberBadger({ value, labelPriority, setLabelPriority, hig
     }, [localPriority]);
 
     return (
-        <Button
-            leftIcon={NumberIcon}
-            onClick={onBtnClick}
-            variant="light"
-            color={isDisabled ? 'teal' : 'blue'}
-            size="sm"
-            mr="sm"
-            mb="sm"
-            styles={(theme) =>
-                localPriority === 0
-                    ? {}
-                    : {
-                          root: {
-                              '&:hover': {
-                                  backgroundColor: theme.colors.teal[0],
-                                  cursor: 'not-allowed',
-                              },
-                          },
-                      }
-            }>
+        <Button leftIcon={NumberIcon} onClick={onBtnClick} variant="light" color={isDisabled ? 'teal' : 'blue'} size="sm" mr="sm" mb="sm">
             {value}
         </Button>
     );
