@@ -1,15 +1,11 @@
 import { ActionIcon, Avatar, Button, Group, LoadingOverlay, Paper, Stack, Text, Textarea } from '@mantine/core';
-import { useMemo, useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Backspace, Eraser, Trash } from 'tabler-icons-react';
-import { ButtonNumberBadger } from '../../components/template/ButtonNumberBadger';
-import { LabelPriority } from '../../types/Template';
+import { Eraser } from 'tabler-icons-react';
 
-const NB_IMAGE = 8;
-const LABELS = { Anger: ['Furious', 'Irritated'], Fear: ['Scared', 'Worried'] };
-const LABELS_ARRAY = Object.entries(LABELS)
-    .map((entry) => entry[1].map((v: string) => `${v} (${entry[0]})`))
-    .flatMap((m) => m);
+import { ButtonNumberBadger } from '../../components/template/ButtonNumberBadger';
+import { LABELS_ARRAY, NB_IMAGE } from '../../services/Labels.services';
+import { LabelPriority } from '../../types/Template';
 
 const randomSort = (array: any[]) =>
     array

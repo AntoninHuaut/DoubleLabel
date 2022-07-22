@@ -1,12 +1,7 @@
 import { Avatar, Button, Group, LoadingOverlay, Paper, Stack, Text, Textarea } from '@mantine/core';
 import { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-const NB_IMAGE = 8;
-const LABELS = { Anger: ['Furious', 'Irritated'], Fear: ['Scared', 'Worried'] };
-const LABELS_ARRAY = Object.entries(LABELS)
-    .map((entry) => entry[1].map((v: string) => `${v} (${entry[0]})`))
-    .flatMap((m) => m);
+import { LABELS_ARRAY, NB_IMAGE } from '../../services/Labels.services';
 
 const randomSort = (array: any[]) =>
     array
