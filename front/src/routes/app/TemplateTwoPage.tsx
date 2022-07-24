@@ -1,13 +1,7 @@
 import { Avatar, Button, Group, LoadingOverlay, Paper, Stack, Text, Textarea } from '@mantine/core';
 import { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LABELS_ARRAY, NB_IMAGE } from '../../services/Labels.services';
-
-const randomSort = (array: any[]) =>
-    array
-        .map((value) => ({ value, sort: Math.random() }))
-        .sort((a, b) => a.sort - b.sort)
-        .map(({ value }) => value);
+import { LABELS_ARRAY, NB_IMAGE, randomSort } from '../../services/Labels.services';
 
 export function TemplateTwoPage() {
     const navigate = useNavigate();
