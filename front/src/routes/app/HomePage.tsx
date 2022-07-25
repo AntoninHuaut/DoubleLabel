@@ -11,12 +11,7 @@ export function HomePage() {
     return (
         <>
             <Stack align="center">
-                <Group spacing={6}>
-                    <Text size="xl">TODO Your id: </Text>
-                    <Text size="xl" color={theme.primaryColor}>
-                        {user.id}
-                    </Text>
-                </Group>
+                <Text size="xl">TODO "rules"</Text>
 
                 <Group>
                     <Button
