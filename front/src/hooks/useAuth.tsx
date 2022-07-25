@@ -1,13 +1,10 @@
 import { Center, Loader, Stack } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
-import { customAlphabet } from 'nanoid';
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 import { IUser } from '../types/LoginType';
 
 const AuthContext = createContext<any>(null);
-const ID_SIZE = 8;
-const nanoid = customAlphabet('1234567890ABCDEFGHIJKLMNPQRSTUVWXYZ', ID_SIZE);
 
 export interface MemoType {
     user: IUser;
@@ -34,7 +31,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode | React.R
     );
 
     const isValidId = (testId: string) => {
-        return !!testId && testId.length === ID_SIZE;
+        return /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i.test(testId);
     };
 
     const refreshUser = () => {
@@ -47,7 +44,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode | React.R
     };
 
     const createId = () => {
-        setIdLocal(nanoid());
+        setIdLocal(crypto.randomUUID());
     };
 
     const login = (id: string) => {

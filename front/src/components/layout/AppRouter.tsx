@@ -8,7 +8,6 @@ import { HomePage } from '../../routes/app/HomePage';
 import { IndexPage } from '../../routes/IndexPage';
 import { PageNotFound } from '../../routes/PageNotFound';
 import { CreateIdPage } from '../../routes/unlogged/CreateIdPage';
-import { LoginPage } from '../../routes/unlogged/LoginPage';
 import { LabelImage } from '../../routes/app/LabelImage';
 
 export function AppRouter() {
@@ -19,7 +18,6 @@ export function AppRouter() {
             element: <UnProtectedLayout />,
             children: [
                 { path: '/', element: <IndexPage /> },
-                { path: '/login', element: <LoginPage /> },
                 { path: '/create-id', element: <CreateIdPage /> },
             ],
         },

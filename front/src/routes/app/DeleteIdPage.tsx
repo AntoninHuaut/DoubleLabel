@@ -1,4 +1,4 @@
-import { Space, Text } from '@mantine/core';
+import { Loader, Space, Stack, Text } from '@mantine/core';
 import { useEffect } from 'react';
 
 import { useAuth } from '../../hooks/useAuth';
@@ -9,10 +9,11 @@ export function DeleteIdPage() {
     useEffect(() => deleteId(), []);
 
     return (
-        <>
+        <Stack mt="xl" align="center" spacing="xs">
             <Text size="xl">Logout</Text>
-            <Space />
             <Text color="gray">You are going to be redirected...</Text>
-        </>
+            <Space h="md" />
+            <Loader size={64} variant="dots" />
+        </Stack>
     );
 }

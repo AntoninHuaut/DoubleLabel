@@ -44,7 +44,7 @@ export function AppHeader(props: AppHeaderProps) {
                 <Group>
                     <ThemeSwitcher />
 
-                    {user && <LogoutButton />}
+                    {/* {user && <LogoutButton />} */}
                 </Group>
             </div>
         </Header>
