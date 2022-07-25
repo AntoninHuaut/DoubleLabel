@@ -9,8 +9,7 @@ import { IndexPage } from '../../routes/IndexPage';
 import { PageNotFound } from '../../routes/PageNotFound';
 import { CreateIdPage } from '../../routes/unlogged/CreateIdPage';
 import { LoginPage } from '../../routes/unlogged/LoginPage';
-import { TemplateOnePage } from '../../routes/app/TemplateOnePage';
-import { TemplateTwoPage } from '../../routes/app/TemplateTwoPage';
+import { LabelImage } from '../../routes/app/LabelImage';
 
 export function AppRouter() {
     const { isLoadingUser, loadingElement } = useAuth();
@@ -30,8 +29,7 @@ export function AppRouter() {
             children: [
                 { path: '/app/home', element: <HomePage /> },
                 { path: '/app/delete-id', element: <DeleteIdPage /> },
-                { path: '/app/template-one', element: <TemplateOnePage /> },
-                { path: '/app/template-two', element: <TemplateTwoPage /> },
+                { path: '/app/label-image', element: <LabelImage /> },
             ],
         },
         {

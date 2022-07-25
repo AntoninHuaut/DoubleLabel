@@ -6,7 +6,7 @@ import { Eraser } from 'tabler-icons-react';
 import { ButtonNumberBadger } from '../../components/template/ButtonNumberBadger';
 import { LABELS_ARRAY, NB_IMAGE, randomSort } from '../../services/Labels.services';
 
-export function TemplateTwoPage() {
+export function LabelImage() {
     const navigate = useNavigate();
     const [count, setCount] = useState(0);
     const [isLoading, setLoading] = useState(false);
