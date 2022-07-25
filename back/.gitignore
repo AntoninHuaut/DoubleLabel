@@ -1,5 +1,5 @@
 __pycache__/
-.scannerwork/
+
 .vscode
 .idea
-./kahoot_like_backend/env/
+./env/
