@@ -23,15 +23,16 @@ export function HomePage() {
                         <Text weight={700} color={theme.primaryColor}>
                             Keep it
                         </Text>
-                        <Text>because it acts as an identifier for your "account".</Text>
+                        <Text>because it acts as an identifier.</Text>
                     </Group>
                     <Text>This id allows you to keep the history of the images that have been shown to you.</Text>
+                    <Text>It will allow you to label images from different devices.</Text>
                 </Stack>
 
                 <Group>
                     {[
-                        ['template-one', 'Demo One'],
-                        ['template-two', 'Demo Two'],
+                        ['template-one', 'Demo Single choice'],
+                        ['template-two', 'Demo Multiple choice'],
                     ].map((btnArray, index) => (
                         <Button
                             key={index}

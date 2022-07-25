@@ -1,6 +1,9 @@
-import { Avatar, Button, Group, LoadingOverlay, Paper, Stack, Text, Textarea } from '@mantine/core';
-import { useMemo, useState, useEffect } from 'react';
+import { ActionIcon, Avatar, Button, Group, LoadingOverlay, Paper, Stack, Text, Textarea } from '@mantine/core';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Eraser } from 'tabler-icons-react';
+
+import { ButtonNumberBadger } from '../../components/template/ButtonNumberBadger';
 import { LABELS_ARRAY, NB_IMAGE, randomSort } from '../../services/Labels.services';
 
 export function TemplateTwoPage() {
@@ -11,7 +14,7 @@ export function TemplateTwoPage() {
     const [isTextAreaDisable, setTextAreaDisable] = useState(false);
     const [isSubmitDisable, setSubmitDisable] = useState(false);
 
-    const [emotionSelected, setEmotionSelected] = useState('');
+    const [labelPriority, setLabelPriority] = useState<string[]>([]);
 
     const [thought, setThought] = useState('');
     const btnLabels = useMemo(() => randomSort([...LABELS_ARRAY]), [count]);
@@ -24,17 +27,21 @@ export function TemplateTwoPage() {
         }, 250);
     };
 
+    const resetPriority = () => setLabelPriority([]);
     const nextImage = () => {
-        setEmotionSelected('');
+        resetPriority();
         setThought('');
         setCount((v) => (v + 1 >= NB_IMAGE ? 0 : v + 1));
     };
 
     useEffect(() => {
-        setTextAreaDisable(emotionSelected === '');
-        setThought('');
-    }, [emotionSelected]);
-    useEffect(() => setSubmitDisable(thought.length === 0 || emotionSelected === ''), [thought, emotionSelected]);
+        setTextAreaDisable(labelPriority.length === 0);
+        if (labelPriority.length === 0) {
+            setThought('');
+        }
+    }, [labelPriority]);
+
+    useEffect(() => setSubmitDisable(thought.length === 0 || labelPriority.length === 0), [thought, labelPriority]);
 
     return (
         <>
@@ -67,23 +74,37 @@ export function TemplateTwoPage() {
 
                     <Avatar size={256} src={`/template/template_${count}.png`} radius={0} mt="md" mx="auto" mb="sm" />
 
-                    <Group spacing="xs" position="center">
-                        <Text align="center" size="xl" weight={700}>
-                            Image #{count}
-                        </Text>
-                    </Group>
-
-                    <Text align="center" size="sm" color="gray">
-                        Choose the emotion that best fits this image.
+                    <Text align="center" size="xl" weight={700}>
+                        Image #{count}
                     </Text>
 
-                    <Group spacing="sm" position="center">
-                        {btnLabels.map((el, index) => (
-                            <Button key={index} value={el} color={emotionSelected === el ? 'teal' : 'yellow'} onClick={() => setEmotionSelected(el)}>
-                                {el}
-                            </Button>
-                        ))}
-                    </Group>
+                    <Text align="center" size="xs" color="gray">
+                        Choose in order of priority (1 = strongest) the emotion(s) associated with this image.
+                        <br />
+                        You don't have to rank the 4 emotions. Choose the emotions that you think correspond to the image.
+                    </Text>
+
+                    <Stack spacing={0}>
+                        <Group spacing="xs" position="center">
+                            {btnLabels.map((el, index) => (
+                                <ButtonNumberBadger key={index} value={el} labelPriority={labelPriority} setLabelPriority={setLabelPriority} />
+                            ))}
+                        </Group>
+
+                        <Group spacing={4} position="center">
+                            <ActionIcon size="sm" color="yellow" onClick={resetPriority} disabled={labelPriority.length === 0}>
+                                <Eraser />
+                            </ActionIcon>
+                            <Text
+                                onClick={resetPriority}
+                                size="sm"
+                                sx={{
+                                    cursor: labelPriority.length === 0 ? 'default' : 'pointer',
+                                }}>
+                                Reset your choices
+                            </Text>
+                        </Group>
+                    </Stack>
 
                     <Textarea
                         placeholder="Your thought"
