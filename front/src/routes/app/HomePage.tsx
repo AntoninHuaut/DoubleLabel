@@ -23,7 +23,7 @@ export function HomePage() {
                 <Stack spacing={0} align="center">
                     <Checkbox
                         checked={tos}
-                        onClick={() => setTOS((v) => !v)}
+                        onChange={(el) => setTOS(el.target.checked)}
                         label="I understand and agree that my responses may be used for research purposes."
                     />
                 </Stack>

@@ -80,6 +80,5 @@ export const mergeFetchOptions = (options: RequestInit): RequestInit => {
     return {
         ...options,
         ...getContentTypeHeader(options),
-        credentials: 'include',
     };
 };

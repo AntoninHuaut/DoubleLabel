@@ -1,7 +1,10 @@
 import { ActionIcon, Avatar, Button, Group, LoadingOverlay, Paper, Space, Stack, Text, Textarea } from '@mantine/core';
+import { showNotification } from '@mantine/notifications';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eraser } from 'tabler-icons-react';
+import { registerAnswerRequest } from '../../api/poll_request';
+import { useFetch } from '../../api/request';
 
 import { ButtonNumberBadger } from '../../components/template/ButtonNumberBadger';
 import { LABELS_ARRAY, NB_IMAGE, randomSort } from '../../services/Labels.services';
@@ -9,7 +12,7 @@ import { LABELS_ARRAY, NB_IMAGE, randomSort } from '../../services/Labels.servic
 export function LabelImage() {
     const navigate = useNavigate();
     const [count, setCount] = useState(0);
-    const [isLoading, setLoading] = useState(false);
+    const pollFetch = useFetch();
 
     const [isTextAreaDisable, setTextAreaDisable] = useState(false);
     const [isSubmitDisable, setSubmitDisable] = useState(false);
@@ -19,13 +22,28 @@ export function LabelImage() {
     const [thought, setThought] = useState('');
     const btnLabels = useMemo(() => randomSort([...LABELS_ARRAY]), [count]);
 
-    const onSubmit = () => {
-        setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
-            nextImage();
-        }, 250);
-    };
+    const onSubmit = () => pollFetch.makeRequest(registerAnswerRequest({ imageId: count, emotions: labelPriority, thought }));
+
+    useEffect(() => {
+        if (pollFetch.cannotHandleResult()) return;
+
+        if (pollFetch.data) {
+            showNotification({
+                message: 'Successfully registered answer',
+                color: 'green',
+            });
+        }
+
+        if (pollFetch.error) {
+            showNotification({
+                title: 'An error occurred',
+                message: pollFetch.error.message,
+                color: 'red',
+            });
+        }
+
+        nextImage();
+    }, [pollFetch.isLoading]);
 
     const resetPriority = () => setLabelPriority([]);
     const nextImage = () => {
@@ -62,7 +80,7 @@ export function LabelImage() {
                         width: 300,
                     },
                 })}>
-                <LoadingOverlay visible={isLoading} />
+                <LoadingOverlay visible={pollFetch.isLoading} />
 
                 <Stack spacing="sm">
                     <Text align="center" size="xl" weight={700}>
@@ -110,7 +128,7 @@ export function LabelImage() {
                             Back
                         </Button>
                         <Group position="center">
-                            <Button onClick={onSubmit} disabled={isSubmitDisable}>
+                            <Button onClick={onSubmit} disabled={isSubmitDisable || pollFetch.isLoading}>
                                 Submit your choice
                             </Button>
                         </Group>
