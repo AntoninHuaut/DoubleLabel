@@ -13,8 +13,8 @@ CREATE TABLE DL_EMOTION_RANK(
 
 CREATE TABLE DL_ANSWER(
         id_answer          INTEGER NOT NULL,
-        feeling Varchar (800) NOT NULL,
-        timestamp_ans Varchar (50) NOT NULL,
+        feeling TEXT NOT NULL,
+        timestamp_ans TIMESTAMP,
         ip_user Varchar (50) NOT NULL,
         id_user INTEGER,
         id_image INTEGER,
