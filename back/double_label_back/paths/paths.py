@@ -20,9 +20,8 @@ def register_answer():
     timestamp_ans = "2020-01-01 00:00:00"
     id_image = 1
     emotion_list  ={0:"irritated",1:"surprise"}
-
+    
     feeling = feeling.replace("'"," ")
-    print(feeling)
     # Register the datas in the database
     result = register_answer_db(id_user, ip_user, feeling, timestamp_ans, id_image, emotion_list)
     if result == 1:
