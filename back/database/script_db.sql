@@ -5,10 +5,10 @@ CREATE TABLE DL_EMOTION(
 
 CREATE TABLE DL_EMOTION_RANK(
         id_answer INTEGER NOT NULL,
-        emotion  INTEGER NOT NULL ,
+        id_emotion  INTEGER NOT NULL ,
         emotion_rank INTEGER,
-        FOREIGN KEY (emotion) REFERENCES DL_EMOTION(id_emotion),
-        PRIMARY KEY (id_answer,emotion,emotion_rank)
+        FOREIGN KEY (id_emotion) REFERENCES DL_EMOTION(id_emotion),
+        PRIMARY KEY (id_answer,id_emotion,emotion_rank)
 );
 
 CREATE TABLE DL_ANSWER(

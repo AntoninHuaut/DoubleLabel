@@ -1,5 +1,6 @@
 from flask import Blueprint, request, redirect, jsonify
 from ..data_access.insert_datas import *
+from ..data_access.get_datas import get_emotion_count
 
 bpapi = Blueprint('api/v1', __name__, url_prefix='/api/v1')
 
@@ -19,8 +20,8 @@ def register_answer():
     feeling = "i think it's surprise because eyebrows are up"
     timestamp_ans = "2020-01-01 00:00:00"
     id_image = 1
-    emotion_list  ={0:"irritated",1:"surprise"}
-    
+    emotion_list  ={0:"surprise",1:"surprise"}
+
     feeling = feeling.replace("'"," ")
     # Register the datas in the database
     result = register_answer_db(id_user, ip_user, feeling, timestamp_ans, id_image, emotion_list)
@@ -28,3 +29,8 @@ def register_answer():
         return 'OK'
     else:
         return 'KO'
+
+@bpapi.route("/get_survey_datas", methods=['GET']) #Return the list of all the survey datas per image
+def get_survey_datas():
+    result = get_emotion_count()
+    return jsonify(result)

@@ -11,8 +11,8 @@ def register_answer_db(id_user, ip_user, feeling, timestamp_ans, id_image, emoti
         for rank, emotion in emotion_list.items():
             try:
                 #Insert the emotion in the database table DL_EMOTION_RANK
-                emotion_id = get_emotion_id(emotion.lower())
-                cursor.execute('INSERT INTO DL_EMOTION_RANK (id_answer, emotion_rank, emotion) VALUES (%d, %d, %d)'%(id_answer, rank, emotion_id))
+                id_emotion = get_emotion_id(emotion.lower())
+                cursor.execute('INSERT INTO DL_EMOTION_RANK (id_answer, emotion_rank, id_emotion) VALUES (%d, %d, %d)'%(id_answer, rank, id_emotion))
                 get_db().commit()
             except Exception as e:
                 print(e)
