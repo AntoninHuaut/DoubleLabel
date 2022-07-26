@@ -7,9 +7,11 @@ import { registerAnswerRequest } from '../../api/poll_request';
 import { useFetch } from '../../api/request';
 
 import { ButtonNumberBadger } from '../../components/template/ButtonNumberBadger';
+import { useAuth } from '../../hooks/useAuth';
 import { LABELS_ARRAY, NB_IMAGE, randomSort } from '../../services/Labels.services';
 
 export function LabelImage() {
+    const auth = useAuth();
     const navigate = useNavigate();
     const [count, setCount] = useState(0);
     const pollFetch = useFetch();
@@ -22,7 +24,7 @@ export function LabelImage() {
     const [thought, setThought] = useState('');
     const btnLabels = useMemo(() => randomSort([...LABELS_ARRAY]), [count]);
 
-    const onSubmit = () => pollFetch.makeRequest(registerAnswerRequest({ imageId: count, emotions: labelPriority, thought }));
+    const onSubmit = () => pollFetch.makeRequest(registerAnswerRequest({ userId: auth.user.id, imageId: count, emotions: labelPriority, thought }));
 
     useEffect(() => {
         if (pollFetch.cannotHandleResult()) return;
