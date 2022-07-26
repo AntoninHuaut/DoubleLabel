@@ -1,5 +1,5 @@
 from .db_access import *
-
+"""
 def insert_user_db(user_code, ip_user):
     cursor = get_db().cursor()
     try:
@@ -10,7 +10,7 @@ def insert_user_db(user_code, ip_user):
         print(e)
         print("user insert failed")
         return -1
-    
+""" 
 
 def record_answer(emotion_list,feeling,timestamp, user_code,id_image):
     cursor = get_db().cursor()
