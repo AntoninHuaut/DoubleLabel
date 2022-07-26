@@ -16,7 +16,7 @@ CREATE TABLE DL_ANSWER(
         feeling TEXT NOT NULL,
         timestamp_ans TIMESTAMP,
         ip_user Varchar (50) NOT NULL,
-        id_user INTEGER,
+        id_user Varchar(50) NOT NULL,
         id_image INTEGER,
     PRIMARY KEY (id_answer)
 );
