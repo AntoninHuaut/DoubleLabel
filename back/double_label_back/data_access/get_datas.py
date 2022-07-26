@@ -1,11 +1,14 @@
 from .db_access import *
 
 #TODO : fetch picture that the user never seen
-def get_picture(user_code):
+def get_picture(id_user):
     cursor = get_db().cursor()
-    #Pick random in result ?
-    #cursor.fetchall()
-    return cursor.fetchone()
+    cursor.execute("SELECT id_image FROM DL_ANSWER WHERE id_user = '%s' GROUP BY id_image"%(id_user))
+    pics_showned_list = []
+    for element in cursor.fetchall():
+        pics_showned_list.append(element[0])
+    #Pick random not in pics_showned_list ?
+    
 
 #TODO Count the number of answer for each emotion and return it in a list
 def get_emotion_count():
@@ -14,6 +17,8 @@ def get_emotion_count():
                     JOIN DL_EMOTION_RANK using (id_answer)\
                     JOIN DL_EMOTION using (id_emotion)\
                     GROUP BY id_emotion, emotion_rank, id_image;")
+    
+    #Gathering results
     results_list = {}
     for element in cursor.fetchall():
         print('rank', element['emotion_rank'],'id_emotion', element['id_emotion'], 'emotion_name', element['emotion_name'], 'total_per_emotion', element['total_per_emotion'])

@@ -1,6 +1,7 @@
+import json
 from flask import Blueprint, request, redirect, jsonify
 from ..data_access.insert_datas import *
-from ..data_access.get_datas import get_emotion_count
+from ..data_access.get_datas import get_emotion_count, get_picture
 
 bpapi = Blueprint('api/v1', __name__, url_prefix='/api/v1')
 
@@ -10,8 +11,10 @@ def home():
 
 @bpapi.route("/get_image", methods=['GET'])
 def send_picture():
+    id_user = "5I9DEXH2"
+    get_picture(id_user)
     # Send the data to the server
-    return 15 #image id
+    return jsonify(15) #image id
 
 @bpapi.route("/register_answer", methods=['GET','POST'])
 def register_answer():
