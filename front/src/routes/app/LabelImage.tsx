@@ -1,4 +1,4 @@
-import { ActionIcon, Avatar, Button, Group, LoadingOverlay, Paper, Stack, Text, Textarea } from '@mantine/core';
+import { ActionIcon, Avatar, Button, Group, LoadingOverlay, Paper, Space, Stack, Text, Textarea } from '@mantine/core';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eraser } from 'tabler-icons-react';
@@ -65,24 +65,11 @@ export function LabelImage() {
                 <LoadingOverlay visible={isLoading} />
 
                 <Stack spacing="sm">
-                    <Group position="center">
-                        <Button onClick={() => navigate('/')}>Back</Button>
-                        <Button color="gray" onClick={nextImage}>
-                            Demo skip
-                        </Button>
-                    </Group>
-
-                    <Avatar size={256} src={`/template/template_${count}.png`} radius={0} mt="md" mx="auto" mb="sm" />
-
                     <Text align="center" size="xl" weight={700}>
                         Image #{count}
                     </Text>
 
-                    <Text align="center" size="xs" color="gray">
-                        Choose in order of priority (1 = strongest) the emotion(s) associated with this image.
-                        <br />
-                        You don't have to rank the 4 emotions. Choose the emotions that you think correspond to the image.
-                    </Text>
+                    <Avatar size={256} src={`/template/template_${count}.png`} radius={0} mx="auto" mb="sm" />
 
                     <Stack spacing={0}>
                         <Group spacing="xs" position="center">
@@ -91,10 +78,11 @@ export function LabelImage() {
                             ))}
                         </Group>
 
-                        <Group spacing={4} position="center">
+                        <Group spacing={4} ml={-16} position="center">
                             <ActionIcon size="sm" color="yellow" onClick={resetPriority} disabled={labelPriority.length === 0}>
                                 <Eraser />
                             </ActionIcon>
+
                             <Text
                                 onClick={resetPriority}
                                 size="sm"
@@ -117,10 +105,16 @@ export function LabelImage() {
                         required
                     />
 
-                    <Group mt="md" position="center">
-                        <Button onClick={onSubmit} disabled={isSubmitDisable}>
-                            Submit your choice
+                    <Group mt="md" position="apart">
+                        <Button variant="outline" onClick={() => navigate('/')}>
+                            Back
                         </Button>
+                        <Group position="center">
+                            <Button onClick={onSubmit} disabled={isSubmitDisable}>
+                                Submit your choice
+                            </Button>
+                        </Group>
+                        <Space w={80} />
                     </Group>
                 </Stack>
             </Paper>
