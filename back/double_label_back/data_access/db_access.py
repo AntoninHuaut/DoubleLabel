@@ -1,7 +1,7 @@
 from flask import g
 import sqlite3
 
-DATA_URL = "./database/db_double_label.db"
+DATA_URL = "./database/double_label_db.db"
 
 def get_db():
     if 'db' not in g:
@@ -21,8 +21,3 @@ def fetch_into_db(request_string):
 	cursor = get_db().cursor()
 	cursor.execute(request_string)
 	return cursor
-
-def insert_into_db(request_string):
-	cursor = get_db().cursor()
-	cursor.execute(request_string)
-	get_db().commit()
