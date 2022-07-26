@@ -23,7 +23,7 @@ def register_answer():
     feeling = "i think it's surprise because eyebrows are up"
     timestamp_ans = "2020-01-01 00:00:00"
     id_image = 1
-    emotion_list  ={0:"surprise",1:"surprise"}
+    emotion_list  ={0:"irritated",1:"surprise"}
 
     feeling = feeling.replace("'"," ")
     # Register the datas in the database
