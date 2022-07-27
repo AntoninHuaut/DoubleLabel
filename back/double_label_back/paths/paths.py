@@ -10,12 +10,17 @@ bpapi = Blueprint('api/v1', __name__, url_prefix='/api/v1')
 def home():
     return "Accueil"
 
-@bpapi.route("/get_image", methods=['GET'])
+@bpapi.route("/get_image", methods=['GET','POST'])
 def send_picture():
-    id_user = "5I9DEXH2"
-    get_picture(id_user)
-    # Send the data to the server
-    return jsonify(15) #image id
+    if request.method == 'POST':
+        id_user = request.form['id_user']
+        #id_user = "5I9DEXH2"
+        image_id = get_picture(id_user) # get a picture id to return
+        # Send the data to the server
+        return jsonify(15) #image id
+    else:
+        print("Recieve GET")
+        return jsonify(-1)
 
 @bpapi.route("/register_answer", methods=['GET','POST'])
 def register_answer():
