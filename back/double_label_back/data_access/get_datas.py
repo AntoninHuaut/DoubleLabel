@@ -7,7 +7,11 @@ def get_picture(id_user):
     pics_showned_list = []
     for element in cursor.fetchall():
         pics_showned_list.append(element[0])
+
+    if len(pics_showned_list) >= 7:
+        return -2 #All pictures have been shown
     #Pick random not in pics_showned_list ?
+    
     print(pics_showned_list)
     new_image = random.randint(0,7)
     while new_image in pics_showned_list:
