@@ -12,16 +12,13 @@ def home():
 
 @bpapi.route("/get_image", methods=['GET','POST'])
 def send_picture():
+    #if request.method == 'POST':
+    id_user = "5e3ef928-c8f7-42cb-a5f5-156651fb8715" #request.get_json['userId']
+    new_image = get_picture(id_user) # get a picture id to return
+    # Send the data to the server
+    print(new_image)
+    return jsonify(new_image) #image id
 
-    if request.method == 'POST':
-        id_user = request.form['id_user']
-        #id_user = "5I9DEXH2"
-        image_id = get_picture(id_user) # get a picture id to return
-        # Send the data to the server
-        return jsonify(15) #image id
-    else:
-        print("Recieve GET")
-        return jsonify(-1)
 
 @bpapi.route("/register_answer", methods=['GET','POST'])
 @cross_origin(origin='127.0.0.1:5173',headers=['Access-Control-Allow-Origin','*'])
@@ -41,8 +38,10 @@ def register_answer():
         # Register the datas in the database
         #print("Registering the datas {} {} {} {} {} {}".format(id_user, id_image, emotion_list, feeling, ip_user, timestamp_ans))
         register_answer_db(id_user, ip_user, feeling, timestamp_ans, id_image, emotion_list)
+        return "OK POST"
     else :
         print("GET METHODE RECIEVED")
+        return "OK GET"
 
 
 @bpapi.route("/get_survey_datas", methods=['GET']) #Return the list of all the survey datas per image

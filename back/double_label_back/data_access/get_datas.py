@@ -1,5 +1,5 @@
 from .db_access import *
-
+import random
 #TODO : fetch picture that the user never seen
 def get_picture(id_user):
     cursor = get_db().cursor()
@@ -8,7 +8,11 @@ def get_picture(id_user):
     for element in cursor.fetchall():
         pics_showned_list.append(element[0])
     #Pick random not in pics_showned_list ?
-    
+    print(pics_showned_list)
+    new_image = random.randint(0,7)
+    while new_image in pics_showned_list:
+        new_image = random.randint(0,7)
+    return new_image
 
 #TODO Count the number of answer for each emotion and return it in a list
 def get_emotion_count():

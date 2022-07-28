@@ -8,7 +8,7 @@ def register_answer_db(id_user, ip_user, feeling, timestamp_ans, id_image, emoti
         cursor.execute("INSERT INTO DL_ANSWER (feeling, timestamp_ans,ip_user, id_user,id_image) VALUES ('%s', '%s', '%s','%s', %d)"%(feeling, timestamp_ans, ip_user, id_user, id_image))
         get_db().commit()
         id_answer = get_answer_id(feeling, timestamp_ans, ip_user, id_user, id_image)
-        print("HERE ", emotion_list)
+        #print("HERE ", emotion_list)
         for rank, emotion in emotion_list.items():
             try:
                 #Insert the emotion in the database table DL_EMOTION_RANK
