@@ -1,19 +1,29 @@
-import { ActionIcon, Avatar, Button, Group, LoadingOverlay, Paper, Space, Stack, Text, Textarea } from '@mantine/core';
+import { ActionIcon, Avatar, Button, Center, Group, Loader, LoadingOverlay, Paper, Space, Stack, Text, Textarea } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eraser } from 'tabler-icons-react';
-import { registerAnswerRequest } from '../../api/poll_request';
+import { imageIdRequest, registerAnswerRequest } from '../../api/poll_request';
 import { useFetch } from '../../api/request';
 
 import { ButtonNumberBadger } from '../../components/template/ButtonNumberBadger';
 import { useAuth } from '../../hooks/useAuth';
 import { LABELS_ARRAY, NB_IMAGE, randomSort } from '../../services/Labels.services';
 
+function error(errorMsg: string) {
+    showNotification({
+        title: 'An error occurred',
+        message: errorMsg,
+        color: 'red',
+    });
+}
+
 export function LabelImage() {
     const auth = useAuth();
     const navigate = useNavigate();
-    const [count, setCount] = useState(0);
+
+    const [imageId, setImageId] = useState(-1);
+    const imageIdFetch = useFetch();
     const pollFetch = useFetch();
 
     const [isTextAreaDisable, setTextAreaDisable] = useState(false);
@@ -22,9 +32,9 @@ export function LabelImage() {
     const [labelPriority, setLabelPriority] = useState<string[]>([]);
 
     const [thought, setThought] = useState('');
-    const btnLabels = useMemo(() => randomSort([...LABELS_ARRAY]), [count]);
+    const btnLabels = useMemo(() => randomSort([...LABELS_ARRAY]), [imageId]);
 
-    const onSubmit = () => pollFetch.makeRequest(registerAnswerRequest({ userId: auth.user.id, imageId: count, emotions: labelPriority, thought }));
+    const onSubmit = () => pollFetch.makeRequest(registerAnswerRequest({ userId: auth.user.id, imageId: imageId, emotions: labelPriority, thought }));
 
     useEffect(() => {
         if (pollFetch.cannotHandleResult()) return;
@@ -37,21 +47,42 @@ export function LabelImage() {
         }
 
         if (pollFetch.error) {
-            showNotification({
-                title: 'An error occurred',
-                message: pollFetch.error.message,
-                color: 'red',
-            });
+            error(pollFetch.error.message);
         }
 
         nextImage();
     }, [pollFetch.isLoading]);
 
+    useEffect(() => {
+        if (imageIdFetch.cannotHandleResult()) return;
+
+        if (imageIdFetch.data) {
+            // setImageId(imageIdFetch.data.id); // TODO modif back
+            setImageId(Math.floor(Math.random() * 50)); /// TODO WIP
+        }
+
+        if (imageIdFetch.error) {
+            error(imageIdFetch.error.message);
+        }
+    }, [imageIdFetch.isLoading]);
+
+    useEffect(() => {
+        if (imageId == -2) {
+            navigate('/app/thank-you');
+        }
+    });
+
+    const getNewImageId = () => imageIdFetch.makeRequest(imageIdRequest({ userId: auth.user.id }));
+
+    useEffect(() => {
+        getNewImageId();
+    }, []);
+
     const resetPriority = () => setLabelPriority([]);
-    const nextImage = () => {
+    const nextImage = async () => {
+        await getNewImageId();
         resetPriority();
         setThought('');
-        setCount((v) => (v + 1 >= NB_IMAGE ? 0 : v + 1));
     };
 
     useEffect(() => {
@@ -82,14 +113,14 @@ export function LabelImage() {
                         width: 300,
                     },
                 })}>
-                <LoadingOverlay visible={pollFetch.isLoading} />
+                <LoadingOverlay visible={pollFetch.isLoading || imageIdFetch.isLoading} />
 
                 <Stack spacing="sm">
                     <Text align="center" size="xl" weight={700}>
-                        Image #{count}
+                        Image #{imageId}
                     </Text>
 
-                    <Avatar size={256} src={`/template/template_${count}.png`} radius={0} mx="auto" mb="sm" />
+                    <Avatar size={256} src={`/template/template_${imageId}.png`} radius={0} mx="auto" mb="sm" />
 
                     <Stack spacing={0}>
                         <Group spacing="xs" position="center">

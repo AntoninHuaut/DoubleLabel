@@ -9,6 +9,7 @@ import { IndexPage } from '../../routes/IndexPage';
 import { PageNotFound } from '../../routes/PageNotFound';
 import { CreateIdPage } from '../../routes/unlogged/CreateIdPage';
 import { LabelImage } from '../../routes/app/LabelImage';
+import { ThankYou } from '../../routes/app/ThankYou';
 
 export function AppRouter() {
     const { isLoadingUser, loadingElement } = useAuth();
@@ -28,6 +29,7 @@ export function AppRouter() {
                 { path: '/app/home', element: <HomePage /> },
                 { path: '/app/delete-id', element: <DeleteIdPage /> },
                 { path: '/app/label-image', element: <LabelImage /> },
+                { path: '/app/thank-you', element: <ThankYou /> },
             ],
         },
         {

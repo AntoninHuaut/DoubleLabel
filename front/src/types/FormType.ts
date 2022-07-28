@@ -4,3 +4,7 @@ export interface IRequestAnswerRequest {
     thought: string;
     emotions: string[];
 }
+
+export interface IImageIdRequest {
+    userId: string;
+}
