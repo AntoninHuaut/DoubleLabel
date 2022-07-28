@@ -57,8 +57,8 @@ export function LabelImage() {
         if (imageIdFetch.cannotHandleResult()) return;
 
         if (imageIdFetch.data) {
-            // setImageId(imageIdFetch.data.id); // TODO modif back
-            setImageId(Math.floor(Math.random() * 50)); /// TODO WIP
+            setImageId(imageIdFetch.data.id); // TODO modif back
+            // setImageId(Math.floor(Math.random() * 50)); /// TODO WIP
         }
 
         if (imageIdFetch.error) {
