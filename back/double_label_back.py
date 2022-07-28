@@ -2,7 +2,7 @@
 from double_label_back import create_app
 from flask_cors import CORS
 app = create_app(debug=True)
-CORS(app, resources={r"/api/v1": {"origins": "localhost:5173"}})
+CORS(app, resources={r"/api/v1": {"origins": "http://127.0.0.1:5173"}})
 
 
 if __name__ == '__main__':

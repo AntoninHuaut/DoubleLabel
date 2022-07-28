@@ -2,6 +2,7 @@ from flask import Blueprint, request, redirect, jsonify
 from ..data_access.insert_datas import *
 from ..data_access.get_datas import get_emotion_count, get_picture
 import datetime 
+from flask_cors import cross_origin
 
 bpapi = Blueprint('api/v1', __name__, url_prefix='/api/v1')
 
@@ -11,6 +12,7 @@ def home():
 
 @bpapi.route("/get_image", methods=['GET','POST'])
 def send_picture():
+
     if request.method == 'POST':
         id_user = request.form['id_user']
         #id_user = "5I9DEXH2"
@@ -22,36 +24,35 @@ def send_picture():
         return jsonify(-1)
 
 @bpapi.route("/register_answer", methods=['GET','POST'])
+@cross_origin(origin='127.0.0.1:5173',headers=['Access-Control-Allow-Origin','*'])
 def register_answer():
     if request.method == 'POST':
-        id_user = request.form['userId']
-        id_image = request.form['imageId']
-        emotion_list = request.form['emotion'] #TODO convert in dict ?
-        feeling = request.form['thought']
-        print("POST METHODE REQUEST")
+        #Get / parse datas
+        request_datas = request.get_json()
+        id_user = request_datas['userId']
+        id_image = request_datas['imageId']
+        emotion_list = {key:value for key,value  in enumerate(request_datas['emotions'])}
+        emotion_list = clear_emotion_values(emotion_list)
+        feeling = request_datas['thought']
         ip_user = str(request.remote_addr)
         timestamp_ans = datetime.datetime.now().timestamp()
-        print(timestamp_ans)
-        #id_user = "5I9DEXH2"
-        #feeling = "i think it's surprise because eyebrows are up"
-        #id_image = 1
-        #emotion_list  ={0:"irritated",1:"surprise"}
-
         feeling = feeling.replace("'"," ")
+
         # Register the datas in the database
-        print("Registering the datas {} {} {} {} {} {}".format(id_user, id_image, emotion_list, feeling, ip_user, timestamp_ans))
-        #result = register_answer_db(id_user, ip_user, feeling, timestamp_ans, id_image, emotion_list)
-        result = True
+        #print("Registering the datas {} {} {} {} {} {}".format(id_user, id_image, emotion_list, feeling, ip_user, timestamp_ans))
+        register_answer_db(id_user, ip_user, feeling, timestamp_ans, id_image, emotion_list)
     else :
         print("GET METHODE RECIEVED")
-        result = False
-        
-    if result == 1:
-        return 'OK'
-    else:
-        return 'KO'
+
 
 @bpapi.route("/get_survey_datas", methods=['GET']) #Return the list of all the survey datas per image
 def get_survey_datas():
     result = get_emotion_count()
     return jsonify(result)
+
+def clear_emotion_values(emotion_list):
+    for key, value in emotion_list.items():
+        if "(" in value:
+            emotion_list[key] = " ".join(value.split("(")[0].split(" ")).lower().strip()
+
+    return emotion_list
