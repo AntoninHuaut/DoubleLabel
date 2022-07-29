@@ -3,7 +3,10 @@ import { INPUT_DIR, OUTPUT_DIR } from '/app.ts';
 import { IEmotion } from '/type.ts';
 
 const EMOTIONS_ID = new Map<string, number>();
-const IMAGE_ID = new Map<string, number>();
+EMOTIONS_ID.set('worried', 1);
+EMOTIONS_ID.set('furious', 2);
+EMOTIONS_ID.set('scared', 3);
+EMOTIONS_ID.set('irritated', 4);
 
 async function getEmotionsFolders() {
     const folders = [];
@@ -27,22 +30,30 @@ async function getImagesFIles(inputFolder: string) {
     return files;
 }
 
-function getId(map: Map<string, number>, key: string): number {
-    if (map.has(key)) {
-        return map.get(key) ?? -1;
+function getEmotionId(emotionFolder: string) {
+    if (!EMOTIONS_ID.has(emotionFolder)) {
+        console.error(`Unknown emotion folder: ${emotionFolder}`);
+        Deno.exit(1);
     }
 
-    const id = map.size + 1;
-    map.set(key, id);
-    return id;
+    return EMOTIONS_ID.get(emotionFolder) ?? -1;
 }
 
-function getEmotionId(emotionFolder: string) {
-    return getId(EMOTIONS_ID, emotionFolder);
-}
+const cyrb53 = function (str: string) {
+    let h1 = 0xdeadbeef ^ 0,
+        h2 = 0x41c6ce57 ^ 0;
+    for (let i = 0, ch; i < str.length; i++) {
+        ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+};
 
 function getImageId(emotionFolder: string, imageFile: string) {
-    return getId(IMAGE_ID, `${emotionFolder}/${imageFile}`);
+    return parseInt(`${getEmotionId(emotionFolder)}${cyrb53(imageFile)}`);
 }
 
 export async function getData(): Promise<IEmotion[]> {
