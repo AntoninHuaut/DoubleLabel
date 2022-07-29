@@ -1,6 +1,6 @@
 import { ActionIcon, Avatar, Button, Center, Group, Loader, LoadingOverlay, Paper, Space, Stack, Text, Textarea } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eraser } from 'tabler-icons-react';
 import { imageIdRequest, registerAnswerRequest } from '../../api/poll_request';
@@ -8,7 +8,7 @@ import { useFetch } from '../../api/request';
 
 import { ButtonNumberBadger } from '../../components/template/ButtonNumberBadger';
 import { useAuth } from '../../hooks/useAuth';
-import { LABELS_ARRAY, NB_IMAGE, randomSort } from '../../services/Labels.services';
+import { LABELS, randomSort } from '../../services/Labels.services';
 
 function error(errorMsg: string) {
     showNotification({
@@ -22,21 +22,25 @@ export function LabelImage() {
     const auth = useAuth();
     const navigate = useNavigate();
 
+    const [labelPriority, setLabelPriority] = useState<string[]>([]);
     const [imageId, setImageId] = useState(-1);
-    const imageIdFetch = useFetch();
-    const pollFetch = useFetch();
+    const btnLabels = useMemo(() => randomSort([...LABELS]), []);
+
+    const [thought, setThought] = useState('');
 
     const [isTextAreaDisable, setTextAreaDisable] = useState(false);
     const [isSubmitDisable, setSubmitDisable] = useState(false);
 
-    const [labelPriority, setLabelPriority] = useState<string[]>([]);
+    const [waitReset, setWaitReset] = useState(false);
+    const imageIdFetch = useFetch();
+    const pollFetch = useFetch();
 
-    const [thought, setThought] = useState('');
-    const btnLabels = useMemo(() => randomSort([...LABELS_ARRAY]), [imageId]);
+    const onSubmit = () => {
+        setWaitReset(true);
+        pollFetch.makeRequest(registerAnswerRequest({ userId: auth.user.id, imageId: imageId, emotions: labelPriority, thought }));
+    };
 
-    const onSubmit = () => pollFetch.makeRequest(registerAnswerRequest({ userId: auth.user.id, imageId: imageId, emotions: labelPriority, thought }));
-
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (pollFetch.cannotHandleResult()) return;
 
         if (pollFetch.data) {
@@ -53,12 +57,12 @@ export function LabelImage() {
         nextImage();
     }, [pollFetch.isLoading]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (imageIdFetch.cannotHandleResult()) return;
 
         if (imageIdFetch.data) {
-            setImageId(imageIdFetch.data.id); // TODO modif back
-            // setImageId(Math.floor(Math.random() * 50)); /// TODO WIP
+            setImageId(imageIdFetch.data.id);
+            setWaitReset(false);
         }
 
         if (imageIdFetch.error) {
@@ -103,7 +107,10 @@ export function LabelImage() {
                 mx="auto"
                 shadow="xl"
                 sx={(theme) => ({
-                    [theme.fn.largerThan('md')]: {
+                    [theme.fn.largerThan('lg')]: {
+                        width: 1100,
+                    },
+                    [theme.fn.smallerThan('lg')]: {
                         width: 900,
                     },
                     [theme.fn.smallerThan('md')]: {
@@ -113,17 +120,17 @@ export function LabelImage() {
                         width: 300,
                     },
                 })}>
-                <LoadingOverlay visible={pollFetch.isLoading || imageIdFetch.isLoading} />
+                <LoadingOverlay visible={pollFetch.isLoading || imageIdFetch.isLoading || waitReset} />
 
                 <Stack spacing="sm">
                     <Text align="center" size="xl" weight={700}>
                         Image #{imageId}
                     </Text>
 
-                    <Avatar size={256} src={`/template/template_${imageId}.png`} radius={0} mx="auto" mb="sm" />
+                    <Avatar size={256} src={`/images/${imageId}.png`} radius={0} mx="auto" mb="sm" />
 
                     <Stack spacing={0}>
-                        <Group spacing="xs" position="center">
+                        <Group spacing={0} position="center">
                             {btnLabels.map((el, index) => (
                                 <ButtonNumberBadger key={index} value={el} labelPriority={labelPriority} setLabelPriority={setLabelPriority} />
                             ))}
@@ -161,7 +168,7 @@ export function LabelImage() {
                             Back
                         </Button>
                         <Group position="center">
-                            <Button onClick={onSubmit} disabled={isSubmitDisable || pollFetch.isLoading}>
+                            <Button onClick={onSubmit} disabled={isSubmitDisable || pollFetch.isLoading || waitReset}>
                                 Submit your choice
                             </Button>
                         </Group>
