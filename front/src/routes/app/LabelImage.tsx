@@ -1,11 +1,11 @@
-import { ActionIcon, Avatar, Button, Center, Group, Loader, LoadingOverlay, Paper, Space, Stack, Text, Textarea } from '@mantine/core';
+import { ActionIcon, Avatar, Button, Group, LoadingOverlay, Paper, Space, Stack, Text, Textarea } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eraser } from 'tabler-icons-react';
+
 import { emotionListRequest, imageIdRequest, registerAnswerRequest } from '../../api/poll_request';
 import { useFetch } from '../../api/request';
-
 import { ButtonNumberBadger } from '../../components/template/ButtonNumberBadger';
 import { useAuth } from '../../hooks/useAuth';
 import { randomSort } from '../../services/Labels.services';
