@@ -14,7 +14,13 @@ export const enum HttpMethod {
     TRACE = 'TRACE',
 }
 
-export const useFetch = () => {
+interface UseFetchParameter {
+    onData?: (servData: any) => any;
+    onError?: (servError: any) => any;
+    onAfterRequest?: () => any;
+}
+
+export const useFetch = (params: UseFetchParameter) => {
     const [data, setData] = useState<any>();
     const [error, setError] = useState<Error | null>();
     const [isLoading, setLoading] = useState<boolean>(false);
@@ -68,7 +74,23 @@ export const useFetch = () => {
         }
     };
 
-    return { data, error, isLoading, cannotHandleResult, nbRequest, makeRequest, abortRequest };
+    useEffect(() => {
+        if (cannotHandleResult()) return;
+
+        if (data && params.onData) {
+            params.onData(data);
+        }
+
+        if (error && params.onError) {
+            params.onError(error);
+        }
+
+        if (params.onAfterRequest) {
+            params.onAfterRequest();
+        }
+    }, [isLoading]);
+
+    return { isLoading, nbRequest, makeRequest, abortRequest };
 };
 
 const getContentTypeHeader = (options: RequestInit): RequestInit => {

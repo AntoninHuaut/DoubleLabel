@@ -14,3 +14,10 @@ export const imageIdRequest = (body: IImageIdRequest) => {
         options: mergeFetchOptions({ method: HttpMethod.POST, body: JSON.stringify(body) }),
     };
 };
+
+export const emotionListRequest = () => {
+    return {
+        url: `${BASE_API_URL}/get_emotion_list`,
+        options: mergeFetchOptions({ method: HttpMethod.GET }),
+    };
+};

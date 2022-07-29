@@ -1,14 +1,14 @@
-import { ActionIcon, Avatar, Button, Center, Group, Loader, LoadingOverlay, Paper, Space, Stack, Text, Textarea } from '@mantine/core';
+import { ActionIcon, Avatar, Button, Group, LoadingOverlay, Paper, Space, Stack, Text, Textarea } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eraser } from 'tabler-icons-react';
-import { imageIdRequest, registerAnswerRequest } from '../../api/poll_request';
-import { useFetch } from '../../api/request';
 
+import { emotionListRequest, imageIdRequest, registerAnswerRequest } from '../../api/poll_request';
+import { useFetch } from '../../api/request';
 import { ButtonNumberBadger } from '../../components/template/ButtonNumberBadger';
 import { useAuth } from '../../hooks/useAuth';
-import { LABELS, randomSort } from '../../services/Labels.services';
+import { randomSort } from '../../services/Labels.services';
 
 function error(errorMsg: string) {
     showNotification({
@@ -24,63 +24,65 @@ export function LabelImage() {
 
     const [labelPriority, setLabelPriority] = useState<string[]>([]);
     const [imageId, setImageId] = useState(-1);
-    const btnLabels = useMemo(() => randomSort([...LABELS]), []);
+    const [btnLabels, setBtnLabels] = useState<string[]>([]);
 
     const [thought, setThought] = useState('');
 
     const [isTextAreaDisable, setTextAreaDisable] = useState(false);
     const [isSubmitDisable, setSubmitDisable] = useState(false);
+    const [isGlobalLoading, setGlobalLoading] = useState(false);
 
-    const [waitReset, setWaitReset] = useState(false);
-    const imageIdFetch = useFetch();
-    const pollFetch = useFetch();
+    const [waitReset, setWaitReset] = useState(true);
+
+    const emotionFetch = useFetch({
+        onData: (data) => setBtnLabels(randomSort(data.map((s: string) => s && s[0].toUpperCase() + s.slice(1)))),
+        onError: (err) => error(err.message),
+    });
+
+    const imageIdFetch = useFetch({
+        onData: (data) => {
+            setImageId(data.id);
+            setWaitReset(false);
+        },
+        onError: (err) => error(err.message),
+    });
+
+    const pollFetch = useFetch({
+        onData: () => {
+            showNotification({
+                message: 'Successfully registered answer',
+                color: 'green',
+            });
+            nextImage();
+        },
+        onError: (err) => {
+            error(err.message);
+            setWaitReset(false);
+        },
+    });
+
+    const getNewImageId = () => imageIdFetch.makeRequest(imageIdRequest({ userId: auth.user.id }));
+
+    useEffect(() => {
+        emotionFetch.makeRequest(emotionListRequest());
+        getNewImageId();
+    }, []);
+
+    useEffect(
+        () => setGlobalLoading(imageIdFetch.isLoading || pollFetch.isLoading || emotionFetch.isLoading || waitReset || btnLabels.length === 0),
+        [imageIdFetch.isLoading, pollFetch.isLoading, emotionFetch.isLoading, waitReset, btnLabels]
+    );
 
     const onSubmit = () => {
         setWaitReset(true);
         pollFetch.makeRequest(registerAnswerRequest({ userId: auth.user.id, imageId: imageId, emotions: labelPriority, thought }));
     };
 
-    useLayoutEffect(() => {
-        if (pollFetch.cannotHandleResult()) return;
-
-        if (pollFetch.data) {
-            showNotification({
-                message: 'Successfully registered answer',
-                color: 'green',
-            });
-        }
-
-        if (pollFetch.error) {
-            error(pollFetch.error.message);
-        }
-
-        nextImage();
-    }, [pollFetch.isLoading]);
-
-    useLayoutEffect(() => {
-        if (imageIdFetch.cannotHandleResult()) return;
-
-        if (imageIdFetch.data) {
-            setImageId(imageIdFetch.data.id);
-            setWaitReset(false);
-        }
-
-        if (imageIdFetch.error) {
-            error(imageIdFetch.error.message);
-        }
-    }, [imageIdFetch.isLoading]);
-
     useEffect(() => {
         if (imageId == -2) {
             navigate('/app/thank-you');
         }
     });
-
-    const getNewImageId = () => imageIdFetch.makeRequest(imageIdRequest({ userId: auth.user.id }));
-
-    useEffect(() => {
-        getNewImageId();
-    }, []);
 
     const resetPriority = () => setLabelPriority([]);
     const nextImage = async () => {
@@ -120,13 +122,9 @@ export function LabelImage() {
                         width: 300,
                     },
                 })}>
-                <LoadingOverlay visible={pollFetch.isLoading || imageIdFetch.isLoading || waitReset} />
+                <LoadingOverlay visible={isGlobalLoading} />
 
                 <Stack spacing="sm">
-                    <Text align="center" size="xl" weight={700}>
-                        Image #{imageId}
-                    </Text>
-
                     <Avatar size={256} src={`/images/${imageId}.png`} radius={0} mx="auto" mb="sm" />
 
                     <Stack spacing={0}>
@@ -168,7 +166,7 @@ export function LabelImage() {
                             Back
                         </Button>
                         <Group position="center">
-                            <Button onClick={onSubmit} disabled={isSubmitDisable || pollFetch.isLoading || waitReset}>
+                            <Button onClick={onSubmit} disabled={isSubmitDisable || isGlobalLoading}>
                                 Submit your choice
                             </Button>
                         </Group>
