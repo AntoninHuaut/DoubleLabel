@@ -32,7 +32,12 @@ export function LabelImage() {
     const [isSubmitDisable, setSubmitDisable] = useState(false);
     const [isGlobalLoading, setGlobalLoading] = useState(false);
 
-    const [waitReset, setWaitReset] = useState(false);
+    const [waitReset, setWaitReset] = useState(true);
+
+    const emotionFetch = useFetch({
+        onData: (data) => setBtnLabels(randomSort(data.map((s: string) => s && s[0].toUpperCase() + s.slice(1)))),
+        onError: (err) => error(err.message),
+    });
 
     const imageIdFetch = useFetch({
         onData: (data) => {
@@ -43,19 +48,25 @@ export function LabelImage() {
     });
 
     const pollFetch = useFetch({
-        onData: () =>
+        onData: () => {
             showNotification({
                 message: 'Successfully registered answer',
                 color: 'green',
-            }),
-        onError: (err) => error(err.message),
-        onAfterRequest: () => nextImage(),
+            });
+            nextImage();
+        },
+        onError: (err) => {
+            error(err.message);
+            setWaitReset(false);
+        },
     });
 
-    const emotionFetch = useFetch({
-        onData: (data) => setBtnLabels(randomSort(data.map((s: string) => s && s[0].toUpperCase() + s.slice(1)))),
-        onError: (err) => error(err.message),
-    });
+    const getNewImageId = () => imageIdFetch.makeRequest(imageIdRequest({ userId: auth.user.id }));
+
+    useEffect(() => {
+        emotionFetch.makeRequest(emotionListRequest());
+        getNewImageId();
+    }, []);
 
     useEffect(
         () => setGlobalLoading(imageIdFetch.isLoading || pollFetch.isLoading || emotionFetch.isLoading || waitReset || btnLabels.length === 0),
@@ -72,13 +83,6 @@ export function LabelImage() {
             navigate('/app/thank-you');
         }
     });
-
-    const getNewImageId = () => imageIdFetch.makeRequest(imageIdRequest({ userId: auth.user.id }));
-
-    useEffect(() => {
-        emotionFetch.makeRequest(emotionListRequest());
-        getNewImageId();
-    }, []);
 
     const resetPriority = () => setLabelPriority([]);
     const nextImage = async () => {
