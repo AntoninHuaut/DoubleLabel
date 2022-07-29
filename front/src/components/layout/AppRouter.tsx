@@ -8,8 +8,9 @@ import { HomePage } from '../../routes/app/HomePage';
 import { IndexPage } from '../../routes/IndexPage';
 import { PageNotFound } from '../../routes/PageNotFound';
 import { CreateIdPage } from '../../routes/unlogged/CreateIdPage';
-import { LabelImage } from '../../routes/app/LabelImage';
-import { ThankYou } from '../../routes/app/ThankYou';
+import { LabelImagePage } from '../../routes/app/LabelImagePage';
+import { ThankYouPage } from '../../routes/app/ThankYouPage';
+import { ResultStatsPage } from '../../routes/app/ResultStatsPage';
 
 export function AppRouter() {
     const { isLoadingUser, loadingElement } = useAuth();
@@ -27,9 +28,10 @@ export function AppRouter() {
             element: <ProtectedLayout />,
             children: [
                 { path: '/app/home', element: <HomePage /> },
+                { path: '/app/result-stats', element: <ResultStatsPage /> },
                 { path: '/app/delete-id', element: <DeleteIdPage /> },
-                { path: '/app/label-image', element: <LabelImage /> },
-                { path: '/app/thank-you', element: <ThankYou /> },
+                { path: '/app/label-image', element: <LabelImagePage /> },
+                { path: '/app/thank-you', element: <ThankYouPage /> },
             ],
         },
         {

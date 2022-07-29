@@ -1,5 +1,4 @@
 import { ActionIcon, Avatar, Button, Group, LoadingOverlay, Paper, Space, Stack, Text, Textarea } from '@mantine/core';
-import { showNotification } from '@mantine/notifications';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eraser } from 'tabler-icons-react';
@@ -9,16 +8,9 @@ import { useFetch } from '../../api/request';
 import { ButtonNumberBadger } from '../../components/template/ButtonNumberBadger';
 import { useAuth } from '../../hooks/useAuth';
 import { randomSort } from '../../services/Labels.services';
+import { errorNotif, successNotif } from '../../services/Notification.services';
 
-function error(errorMsg: string) {
-    showNotification({
-        title: 'An error occurred',
-        message: errorMsg,
-        color: 'red',
-    });
-}
-
-export function LabelImage() {
+export function LabelImagePage() {
     const auth = useAuth();
     const navigate = useNavigate();
 
@@ -36,7 +28,7 @@ export function LabelImage() {
 
     const emotionFetch = useFetch({
         onData: (data) => setBtnLabels(randomSort(data.map((s: string) => s && s[0].toUpperCase() + s.slice(1)))),
-        onError: (err) => error(err.message),
+        onError: (err) => errorNotif(err.message),
     });
 
     const imageIdFetch = useFetch({
@@ -44,19 +36,16 @@ export function LabelImage() {
             setImageId(data.id);
             setWaitReset(false);
         },
-        onError: (err) => error(err.message),
+        onError: (err) => errorNotif(err.message),
     });
 
     const pollFetch = useFetch({
         onData: () => {
-            showNotification({
-                message: 'Successfully registered answer',
-                color: 'green',
-            });
+            successNotif('Successfully registered answer');
             nextImage();
         },
         onError: (err) => {
-            error(err.message);
+            errorNotif(err.message);
             setWaitReset(false);
         },
     });

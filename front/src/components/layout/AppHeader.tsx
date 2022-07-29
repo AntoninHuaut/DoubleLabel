@@ -19,9 +19,9 @@ export function AppHeader(props: AppHeaderProps) {
     return (
         <Header height={56} px="md">
             <div style={{ height: 56, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
+                {/* <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
                     <Burger opened={opened} onClick={() => setOpened((v) => !v)} size="sm" color={theme.colors.gray[6]} />
-                </MediaQuery>
+                </MediaQuery> */}
 
                 <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
                     <Group position="apart">
