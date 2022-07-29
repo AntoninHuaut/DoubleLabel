@@ -33,56 +33,39 @@ export function LabelImage() {
     const [isGlobalLoading, setGlobalLoading] = useState(false);
 
     const [waitReset, setWaitReset] = useState(false);
-    const imageIdFetch = useFetch();
-    const pollFetch = useFetch();
-    const emotionFetch = useFetch();
+
+    const imageIdFetch = useFetch({
+        onData: (data) => {
+            setImageId(data.id);
+            setWaitReset(false);
+        },
+        onError: (err) => error(err.message),
+    });
+
+    const pollFetch = useFetch({
+        onData: () =>
+            showNotification({
+                message: 'Successfully registered answer',
+                color: 'green',
+            }),
+        onError: (err) => error(err.message),
+        onAfterRequest: () => nextImage(),
+    });
+
+    const emotionFetch = useFetch({
+        onData: (data) => setBtnLabels(randomSort(data.map((s: string) => s && s[0].toUpperCase() + s.slice(1)))),
+        onError: (err) => error(err.message),
+    });
+
+    useEffect(
+        () => setGlobalLoading(imageIdFetch.isLoading || pollFetch.isLoading || emotionFetch.isLoading || waitReset || btnLabels.length === 0),
+        [imageIdFetch.isLoading, pollFetch.isLoading, emotionFetch.isLoading, waitReset, btnLabels]
+    );
 
     const onSubmit = () => {
         setWaitReset(true);
         pollFetch.makeRequest(registerAnswerRequest({ userId: auth.user.id, imageId: imageId, emotions: labelPriority, thought }));
     };
-
-    useEffect(() => {
-        if (pollFetch.cannotHandleResult()) return;
-
-        if (pollFetch.data) {
-            showNotification({
-                message: 'Successfully registered answer',
-                color: 'green',
-            });
-        }
-
-        if (pollFetch.error) {
-            error(pollFetch.error.message);
-        }
-
-        nextImage();
-    }, [pollFetch.isLoading]);
-
-    useEffect(() => {
-        if (imageIdFetch.cannotHandleResult()) return;
-
-        if (imageIdFetch.data) {
-            setImageId(imageIdFetch.data.id);
-            setWaitReset(false);
-        }
-
-        if (imageIdFetch.error) {
-            error(imageIdFetch.error.message);
-        }
-    }, [imageIdFetch.isLoading]);
-
-    useEffect(() => {
-        if (emotionFetch.cannotHandleResult()) return;
-
-        if (emotionFetch.data) {
-            setBtnLabels(randomSort(emotionFetch.data.map((s: string) => s && s[0].toUpperCase() + s.slice(1))));
-        }
-
-        if (emotionFetch.error) {
-            error(emotionFetch.error.message);
-        }
-    }, [emotionFetch.isLoading]);
 
     useEffect(() => {
         if (imageId == -2) {
@@ -112,11 +95,6 @@ export function LabelImage() {
     }, [labelPriority]);
 
     useEffect(() => setSubmitDisable(thought.length === 0 || labelPriority.length === 0), [thought, labelPriority]);
-
-    useEffect(
-        () => setGlobalLoading(imageIdFetch.isLoading || pollFetch.isLoading || emotionFetch.isLoading || waitReset),
-        [imageIdFetch.isLoading, pollFetch.isLoading, emotionFetch.isLoading, waitReset]
-    );
 
     return (
         <>
