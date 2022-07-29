@@ -13,6 +13,4 @@ ENV FLASK_APP=double_label_back \
 
 COPY . .
 
-RUN python init_db.py
-
 CMD [ "waitress-serve", "--port=5000", "--call", "double_label_back:create_app"]
