@@ -1,3 +1,4 @@
+import json
 from flask import Blueprint, request, redirect, jsonify
 from ..data_access.insert_datas import *
 from ..data_access.get_datas import get_emotion_count, get_picture
@@ -11,17 +12,21 @@ def home():
     return "Accueil"
 
 @bpapi.route("/get_image", methods=['GET','POST'])
+@cross_origin(origin='127.0.0.1:5173',headers=['Access-Control-Allow-Origin','127.0.0.1:5173'])
 def send_picture():
-    #if request.method == 'POST':
-    id_user = "5e3ef928-c8f7-42cb-a5f5-156651fb8715" #request.get_json['userId']
-    new_image = get_picture(id_user) # get a picture id to return
-    # Send the data to the server
-    print(new_image)
-    return jsonify(new_image) #image id
+    if request.method == 'POST':
+        #id_user = "5e3ef928-c8f7-42cb-a5f5-156651fb8715" #request.get_json['userId']
+        request_datas = request.get_json()
+        new_image = get_picture(request_datas['userId']) # get a picture id to return
+        # Send the data to the server
+        print(new_image)
+        return jsonify({"id":new_image}) #image id
+    else :
+        return jsonify(-1) #error
 
 
 @bpapi.route("/register_answer", methods=['GET','POST'])
-@cross_origin(origin='127.0.0.1:5173',headers=['Access-Control-Allow-Origin','*'])
+@cross_origin(origin='127.0.0.1:5173',headers=['Access-Control-Allow-Origin','127.0.0.1:5173'])
 def register_answer():
     if request.method == 'POST':
         #Get / parse datas
