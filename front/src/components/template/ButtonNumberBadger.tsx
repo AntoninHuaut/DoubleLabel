@@ -42,7 +42,15 @@ export function ButtonNumberBadger({ value, labelPriority, setLabelPriority }: B
     useEffect(() => setDisabled(localPriority > 0), [localPriority]);
 
     return (
-        <Button leftIcon={ICONS[localPriority]} onClick={onBtnClick} variant="light" color={isDisabled ? 'teal' : 'blue'} size="sm" mr="sm" mb="sm">
+        <Button
+            sx={{ width: 118 }}
+            leftIcon={ICONS[localPriority]}
+            onClick={onBtnClick}
+            variant="light"
+            color={isDisabled ? 'teal' : 'blue'}
+            size="sm"
+            mr="sm"
+            mb="sm">
             {value}
         </Button>
     );

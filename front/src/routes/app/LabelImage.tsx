@@ -8,7 +8,7 @@ import { useFetch } from '../../api/request';
 
 import { ButtonNumberBadger } from '../../components/template/ButtonNumberBadger';
 import { useAuth } from '../../hooks/useAuth';
-import { LABELS_ARRAY, NB_IMAGE, randomSort } from '../../services/Labels.services';
+import { LABELS, randomSort } from '../../services/Labels.services';
 
 function error(errorMsg: string) {
     showNotification({
@@ -32,7 +32,7 @@ export function LabelImage() {
     const [labelPriority, setLabelPriority] = useState<string[]>([]);
 
     const [thought, setThought] = useState('');
-    const btnLabels = useMemo(() => randomSort([...LABELS_ARRAY]), [imageId]);
+    const btnLabels = useMemo(() => randomSort([...LABELS]), []);
 
     const onSubmit = () => pollFetch.makeRequest(registerAnswerRequest({ userId: auth.user.id, imageId: imageId, emotions: labelPriority, thought }));
 
@@ -57,8 +57,7 @@ export function LabelImage() {
         if (imageIdFetch.cannotHandleResult()) return;
 
         if (imageIdFetch.data) {
-            setImageId(imageIdFetch.data.id); // TODO modif back
-            // setImageId(Math.floor(Math.random() * 50)); /// TODO WIP
+            setImageId(imageIdFetch.data.id);
         }
 
         if (imageIdFetch.error) {
@@ -103,7 +102,10 @@ export function LabelImage() {
                 mx="auto"
                 shadow="xl"
                 sx={(theme) => ({
-                    [theme.fn.largerThan('md')]: {
+                    [theme.fn.largerThan('lg')]: {
+                        width: 1100,
+                    },
+                    [theme.fn.smallerThan('lg')]: {
                         width: 900,
                     },
                     [theme.fn.smallerThan('md')]: {
@@ -120,10 +122,10 @@ export function LabelImage() {
                         Image #{imageId}
                     </Text>
 
-                    <Avatar size={256} src={`/template/template_${imageId}.png`} radius={0} mx="auto" mb="sm" />
+                    <Avatar size={256} src={`/images/${imageId}.png`} radius={0} mx="auto" mb="sm" />
 
                     <Stack spacing={0}>
-                        <Group spacing="xs" position="center">
+                        <Group spacing={0} position="center">
                             {btnLabels.map((el, index) => (
                                 <ButtonNumberBadger key={index} value={el} labelPriority={labelPriority} setLabelPriority={setLabelPriority} />
                             ))}
