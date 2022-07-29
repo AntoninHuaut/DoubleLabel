@@ -11,16 +11,12 @@ bpapi = Blueprint('api/v1', __name__, url_prefix='/api/v1')
 def home():
     return jsonify({"status": "UP"})
 
-
 @bpapi.route("/get_image", methods=['POST'])
 @cross_origin()
 def send_picture():
     if request.method == 'POST':
-        # id_user = "5e3ef928-c8f7-42cb-a5f5-156651fb8715" #request.get_json['userId']
         request_datas = request.get_json()
-        # get a picture id to return
         new_image = get_picture(request_datas['userId'])
-        # Send the data to the server
         return jsonify({"id": new_image})  # image id
     else:
         return jsonify(-1)  # error
@@ -43,7 +39,6 @@ def register_answer():
         feeling = feeling.replace("'", " ")
 
         # Register the datas in the database
-        #print("Registering the datas {} {} {} {} {} {}".format(id_user, id_image, emotion_list, feeling, ip_user, timestamp_ans))
         register_answer_db(id_user, ip_user, feeling,
                            timestamp_ans, id_image, emotion_list)
         return jsonify()

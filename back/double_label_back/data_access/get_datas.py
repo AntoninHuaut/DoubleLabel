@@ -9,7 +9,7 @@ def get_picture(id_user):
     if len(id_images) == 0:
         init_id_images()
     
-    #GET IMAGES SEEN BY THE USER
+    #Get images seen by the user
     cursor = get_db().cursor()
     cursor.execute("SELECT id_image FROM DL_ANSWER WHERE id_user = '%s' GROUP BY id_image"%(id_user))
     pics_showned_list = []
