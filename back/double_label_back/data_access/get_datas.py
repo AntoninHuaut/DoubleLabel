@@ -1,21 +1,24 @@
 from .db_access import *
 import random
+pictures_number = 7
+
 #TODO : fetch picture that the user never seen
 def get_picture(id_user):
+    global pictures_number
     cursor = get_db().cursor()
     cursor.execute("SELECT id_image FROM DL_ANSWER WHERE id_user = '%s' GROUP BY id_image"%(id_user))
     pics_showned_list = []
     for element in cursor.fetchall():
         pics_showned_list.append(element[0])
 
-    if len(pics_showned_list) >= 7:
+    if len(pics_showned_list) >= pictures_number:
         return -2 #All pictures have been shown
     #Pick random not in pics_showned_list ?
     
-    print(pics_showned_list)
-    new_image = random.randint(0,7)
+    #print(pics_showned_list)
+    new_image = random.randint(0,pictures_number)
     while new_image in pics_showned_list:
-        new_image = random.randint(0,7)
+        new_image = random.randint(0,pictures_number)
     return new_image
 
 #TODO Count the number of answer for each emotion and return it in a list

@@ -1,5 +1,5 @@
 import json
-from flask import Blueprint, request, redirect, jsonify
+from flask import Blueprint, request, jsonify
 from ..data_access.insert_datas import *
 from ..data_access.get_datas import get_emotion_count, get_picture
 import datetime 
@@ -19,7 +19,7 @@ def send_picture():
         request_datas = request.get_json()
         new_image = get_picture(request_datas['userId']) # get a picture id to return
         # Send the data to the server
-        print(new_image)
+        #print(new_image)
         return jsonify({"id":new_image}) #image id
     else :
         return jsonify(-1) #error
