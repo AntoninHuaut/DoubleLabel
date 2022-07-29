@@ -11,6 +11,12 @@ CREATE TABLE DL_EMOTION_RANK(
         PRIMARY KEY (id_answer,id_emotion,emotion_rank)
 );
 
+CREATE TABLE DL_IMAGE(
+        id_image INTEGER NOT NULL,
+        id_emotion INTEGER NOT NULL ,
+        PRIMARY KEY (id_image,id_emotion)
+);
+
 CREATE TABLE DL_ANSWER(
         id_answer          INTEGER NOT NULL,
         feeling TEXT NOT NULL,
