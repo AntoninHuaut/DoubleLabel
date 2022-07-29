@@ -121,10 +121,6 @@ export function LabelImage() {
                 <LoadingOverlay visible={isGlobalLoading} />
 
                 <Stack spacing="sm">
-                    <Text align="center" size="xl" weight={700}>
-                        Image #{imageId}
-                    </Text>
-
                     <Avatar size={256} src={`/images/${imageId}.png`} radius={0} mx="auto" mb="sm" />
 
                     <Stack spacing={0}>
