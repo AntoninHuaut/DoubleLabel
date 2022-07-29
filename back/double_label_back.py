@@ -1,11 +1,13 @@
 #!/bin/env python
+import os
 from double_label_back import create_app
 from flask_cors import CORS
 from .double_label_back.data_access.get_datas import init_id_images
 
 app = create_app(debug=True)
 
-CORS(app, resources={r"/api/v1": {"origins":"http://127.0.0.1:5173" }}) #global to app
+# global to app
+CORS(app, resources={r"/api/v1": {"origins": os.environ.get('CORS_URL')}})
 
 if __name__ == '__main__':
     from waitress import serve
