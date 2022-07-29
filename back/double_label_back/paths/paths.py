@@ -49,12 +49,14 @@ def register_answer():
 
 # Return the list of all the survey datas per image
 @bpapi.route("/get_survey_datas", methods=['GET'])
+@cross_origin()
 def get_survey_datas():
     result = get_emotion_count()
     return jsonify(result)
 
 
 @bpapi.route("/get_emotion_list", methods=['GET'])
+@cross_origin()
 def get_emotion_list():
     result = get_emotion_list_db()
     return jsonify(result)
