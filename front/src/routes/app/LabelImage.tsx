@@ -1,6 +1,6 @@
 import { ActionIcon, Avatar, Button, Center, Group, Loader, LoadingOverlay, Paper, Space, Stack, Text, Textarea } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eraser } from 'tabler-icons-react';
 import { imageIdRequest, registerAnswerRequest } from '../../api/poll_request';
@@ -22,21 +22,25 @@ export function LabelImage() {
     const auth = useAuth();
     const navigate = useNavigate();
 
+    const [labelPriority, setLabelPriority] = useState<string[]>([]);
     const [imageId, setImageId] = useState(-1);
-    const imageIdFetch = useFetch();
-    const pollFetch = useFetch();
+    const btnLabels = useMemo(() => randomSort([...LABELS]), []);
+
+    const [thought, setThought] = useState('');
 
     const [isTextAreaDisable, setTextAreaDisable] = useState(false);
     const [isSubmitDisable, setSubmitDisable] = useState(false);
 
-    const [labelPriority, setLabelPriority] = useState<string[]>([]);
+    const [waitReset, setWaitReset] = useState(false);
+    const imageIdFetch = useFetch();
+    const pollFetch = useFetch();
 
-    const [thought, setThought] = useState('');
-    const btnLabels = useMemo(() => randomSort([...LABELS]), []);
+    const onSubmit = () => {
+        setWaitReset(true);
+        pollFetch.makeRequest(registerAnswerRequest({ userId: auth.user.id, imageId: imageId, emotions: labelPriority, thought }));
+    };
 
-    const onSubmit = () => pollFetch.makeRequest(registerAnswerRequest({ userId: auth.user.id, imageId: imageId, emotions: labelPriority, thought }));
-
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (pollFetch.cannotHandleResult()) return;
 
         if (pollFetch.data) {
@@ -53,11 +57,12 @@ export function LabelImage() {
         nextImage();
     }, [pollFetch.isLoading]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (imageIdFetch.cannotHandleResult()) return;
 
         if (imageIdFetch.data) {
             setImageId(imageIdFetch.data.id);
+            setWaitReset(false);
         }
 
         if (imageIdFetch.error) {
@@ -115,7 +120,7 @@ export function LabelImage() {
                         width: 300,
                     },
                 })}>
-                <LoadingOverlay visible={pollFetch.isLoading || imageIdFetch.isLoading} />
+                <LoadingOverlay visible={pollFetch.isLoading || imageIdFetch.isLoading || waitReset} />
 
                 <Stack spacing="sm">
                     <Text align="center" size="xl" weight={700}>
@@ -163,7 +168,7 @@ export function LabelImage() {
                             Back
                         </Button>
                         <Group position="center">
-                            <Button onClick={onSubmit} disabled={isSubmitDisable || pollFetch.isLoading}>
+                            <Button onClick={onSubmit} disabled={isSubmitDisable || pollFetch.isLoading || waitReset}>
                                 Submit your choice
                             </Button>
                         </Group>
