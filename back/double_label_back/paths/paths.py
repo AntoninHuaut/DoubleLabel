@@ -1,4 +1,3 @@
-import json
 from flask import Blueprint, request, jsonify
 from ..data_access.insert_datas import *
 from ..data_access.get_datas import get_emotion_count, get_picture

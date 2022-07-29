@@ -1,6 +1,6 @@
 from .db_access import *
 import random
-pictures_number = 7
+pictures_number = 404
 
 #TODO : fetch picture that the user never seen
 def get_picture(id_user):
