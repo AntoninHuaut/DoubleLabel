@@ -75,7 +75,7 @@ export function LabelImage() {
 
     const onSubmit = () => {
         setWaitReset(true);
-        pollFetch.makeRequest(registerAnswerRequest({ userId: auth.user.id, imageId: imageId, emotions: labelPriority, thought }));
+        pollFetch.makeRequest(registerAnswerRequest({ userId: auth.user.id, imageId: imageId, emotions: labelPriority.map((s) => s.toLowerCase()), thought }));
     };
 
     useEffect(() => {
