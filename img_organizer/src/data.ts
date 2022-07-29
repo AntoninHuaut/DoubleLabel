@@ -1,12 +1,6 @@
 import { walk } from 'fs';
-import { INPUT_DIR, OUTPUT_DIR } from '/app.ts';
+import { EMOTIONS_ID, INPUT_DIR, OUTPUT_DIR } from '/app.ts';
 import { IEmotion } from '/type.ts';
-
-const EMOTIONS_ID = new Map<string, number>();
-EMOTIONS_ID.set('worried', 1);
-EMOTIONS_ID.set('furious', 2);
-EMOTIONS_ID.set('scared', 3);
-EMOTIONS_ID.set('irritated', 4);
 
 async function getEmotionsFolders() {
     const folders = [];
@@ -65,11 +59,10 @@ export async function getData(): Promise<IEmotion[]> {
                 emotionName: emotionFolder,
                 files: (await getImagesFIles(emotionFolder)).map((inputFile) => {
                     const imageId = getImageId(emotionFolder, inputFile);
-                    const ext = inputFile.split('.').pop();
                     return {
                         imageId: imageId,
                         inputPath: `${INPUT_DIR}/${emotionFolder}/${inputFile}`,
-                        outputPath: `${OUTPUT_DIR}/${emotionFolder}/${imageId}.${ext}`,
+                        outputPath: `${OUTPUT_DIR}/${imageId}.png`,
                     };
                 }),
             };
