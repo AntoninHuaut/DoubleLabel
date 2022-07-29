@@ -1,25 +1,27 @@
 from .db_access import *
 import random
-pictures_number = 404
+id_images = []
 
 #TODO : fetch picture that the user never seen
 def get_picture(id_user):
-    global pictures_number
+    global id_images
+
+    if len(id_images) == 0:
+        init_id_images()
+    
+    #GET IMAGES SEEN BY THE USER
     cursor = get_db().cursor()
     cursor.execute("SELECT id_image FROM DL_ANSWER WHERE id_user = '%s' GROUP BY id_image"%(id_user))
     pics_showned_list = []
     for element in cursor.fetchall():
         pics_showned_list.append(element[0])
 
-    if len(pics_showned_list) >= pictures_number:
+    if len(pics_showned_list) >= len(id_images):
         return -2 #All pictures have been shown
-    #Pick random not in pics_showned_list ?
     
-    #print(pics_showned_list)
-    new_image = random.randint(0,pictures_number)
-    while new_image in pics_showned_list:
-        new_image = random.randint(0,pictures_number)
-    return new_image
+    available_images = [picture for picture in id_images if picture not in pics_showned_list]
+    return available_images[random.randint(0, len(available_images)-1)]
+    
 
 #TODO Count the number of answer for each emotion and return it in a list
 def get_emotion_count():
@@ -32,7 +34,7 @@ def get_emotion_count():
     #Gathering results
     results_list = {}
     for element in cursor.fetchall():
-        print('rank', element['emotion_rank'],'id_emotion', element['id_emotion'], 'emotion_name', element['emotion_name'], 'total_per_emotion', element['total_per_emotion'])
+        #print('rank', element['emotion_rank'],'id_emotion', element['id_emotion'], 'emotion_name', element['emotion_name'], 'total_per_emotion', element['total_per_emotion'])
         if results_list.get(element['id_image'],404) == 404:
             results_list[element['id_image']] = [{'rank':element['emotion_rank'],'id_emotion': element['id_emotion'], 'emotion_name': element['emotion_name'], 'total_per_emotion': element['total_per_emotion']}]
         else:
@@ -59,3 +61,11 @@ def get_emotion_list_db():
         emotion_list.append(element[0])
 
     return emotion_list
+
+def init_id_images():
+    global id_images
+    cursor_start = get_db().cursor()
+    cursor_start.execute("SELECT id_image FROM DL_IMAGE")
+    for element in cursor_start.fetchall():
+        id_images.append(element[0])
+

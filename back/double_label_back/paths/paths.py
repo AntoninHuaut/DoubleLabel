@@ -11,7 +11,7 @@ def home():
     return "Accueil"
 
 @bpapi.route("/get_image", methods=['GET','POST'])
-@cross_origin()
+#@cross_origin()
 def send_picture():
     if request.method == 'POST':
         #id_user = "5e3ef928-c8f7-42cb-a5f5-156651fb8715" #request.get_json['userId']
@@ -21,7 +21,9 @@ def send_picture():
         #print(new_image)
         return jsonify({"id":new_image}) #image id
     else :
-        return jsonify(-1) #error
+        print('GET')
+        new_image = get_picture(1) # get a picture id to return
+        return "OK"#jsonify(-1) #error
 
 
 @bpapi.route("/register_answer", methods=['GET','POST'])
