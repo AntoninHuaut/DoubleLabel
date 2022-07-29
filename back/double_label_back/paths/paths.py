@@ -32,7 +32,6 @@ def register_answer():
         id_image = request_datas['imageId']
         emotion_list = {key: value for key,
                         value in enumerate(request_datas['emotions'])}
-        emotion_list = clear_emotion_values(emotion_list)
         feeling = request_datas['thought']
         ip_user = str(request.remote_addr)
         timestamp_ans = datetime.datetime.now().timestamp()
@@ -60,12 +59,3 @@ def get_survey_datas():
 def get_emotion_list():
     result = get_emotion_list_db()
     return jsonify(result)
-
-
-def clear_emotion_values(emotion_list):
-    for key, value in emotion_list.items():
-        if "(" in value:
-            emotion_list[key] = " ".join(
-                value.split("(")[0].split(" ")).lower().strip()
-
-    return jsonify(emotion_list)
