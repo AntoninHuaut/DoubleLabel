@@ -1,4 +1,5 @@
 import { emptyDir } from 'https://deno.land/std@0.149.0/fs/empty_dir.ts';
+import { generateInsert } from './sql.ts';
 import { getData } from '/data.ts';
 import { createOutputDirs } from '/outputDir.ts';
 
@@ -6,9 +7,9 @@ export const INPUT_DIR = 'input';
 export const OUTPUT_DIR = '../front/public/images/';
 export const EMOTIONS_ID = new Map<string, number>();
 EMOTIONS_ID.set('worried', 1);
-EMOTIONS_ID.set('furious', 2);
-EMOTIONS_ID.set('scared', 3);
-EMOTIONS_ID.set('irritated', 4);
+EMOTIONS_ID.set('scared', 2);
+EMOTIONS_ID.set('irritated', 3);
+EMOTIONS_ID.set('furious', 4);
 
 const data = await getData();
 
@@ -26,4 +27,5 @@ for (const emotion of data) {
 
 await emptyDir(OUTPUT_DIR);
 await createOutputDirs(data);
+await generateInsert(data);
 Deno.writeTextFileSync('data.json', JSON.stringify(data, null, 2));
