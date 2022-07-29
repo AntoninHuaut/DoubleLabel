@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from ..data_access.insert_datas import *
-from ..data_access.get_datas import get_emotion_count, get_picture
+from ..data_access.get_datas import get_emotion_count, get_picture, get_emotion_list_db
 import datetime 
 from flask_cors import cross_origin
 
@@ -11,7 +11,7 @@ def home():
     return "Accueil"
 
 @bpapi.route("/get_image", methods=['GET','POST'])
-@cross_origin(origin='127.0.0.1:5173',headers=['Access-Control-Allow-Origin','127.0.0.1:5173'])
+@cross_origin()
 def send_picture():
     if request.method == 'POST':
         #id_user = "5e3ef928-c8f7-42cb-a5f5-156651fb8715" #request.get_json['userId']
@@ -25,7 +25,7 @@ def send_picture():
 
 
 @bpapi.route("/register_answer", methods=['GET','POST'])
-@cross_origin(origin='127.0.0.1:5173',headers=['Access-Control-Allow-Origin','127.0.0.1:5173'])
+@cross_origin()#origin=,headers=['Access-Control-Allow-Origin',])
 def register_answer():
     if request.method == 'POST':
         #Get / parse datas
@@ -42,10 +42,10 @@ def register_answer():
         # Register the datas in the database
         #print("Registering the datas {} {} {} {} {} {}".format(id_user, id_image, emotion_list, feeling, ip_user, timestamp_ans))
         register_answer_db(id_user, ip_user, feeling, timestamp_ans, id_image, emotion_list)
-        return "OK POST"
+        return jsonify()
     else :
         print("GET METHODE RECIEVED")
-        return "OK GET"
+        return jsonify()
 
 
 @bpapi.route("/get_survey_datas", methods=['GET']) #Return the list of all the survey datas per image
@@ -53,9 +53,14 @@ def get_survey_datas():
     result = get_emotion_count()
     return jsonify(result)
 
+@bpapi.route("/get_emotion_list", methods=['GET'])
+def get_emotion_list():
+    result = get_emotion_list_db()
+    return jsonify(result)
+
 def clear_emotion_values(emotion_list):
     for key, value in emotion_list.items():
         if "(" in value:
             emotion_list[key] = " ".join(value.split("(")[0].split(" ")).lower().strip()
 
-    return emotion_list
+    return jsonify(emotion_list)

@@ -50,3 +50,12 @@ def get_emotion_id(emotion):
     cursor = get_db().cursor()
     cursor.execute("SELECT id_emotion FROM DL_EMOTION WHERE emotion_name = '%s'"%(emotion))
     return cursor.fetchone()[0]
+
+def get_emotion_list_db():
+    cursor = get_db().cursor()
+    cursor.execute("SELECT emotion_name FROM DL_EMOTION")
+    emotion_list = []
+    for element in cursor.fetchall():
+        emotion_list.append(element[0])
+
+    return emotion_list
