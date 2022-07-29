@@ -1,5 +1,5 @@
 import { Button } from '@mantine/core';
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Number1, Number2, Number3, Number4, Number5, Number6, Number7, Number8, Number9, QuestionMark } from 'tabler-icons-react';
 
 interface ButtonNumberBadgerProps {
