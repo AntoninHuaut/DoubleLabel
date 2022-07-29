@@ -11,6 +11,7 @@ bpapi = Blueprint('api/v1', __name__, url_prefix='/api/v1')
 def home():
     return jsonify({"status": "UP"})
 
+
 @bpapi.route("/get_image", methods=['POST'])
 @cross_origin()
 def send_picture():
@@ -33,7 +34,7 @@ def register_answer():
         emotion_list = {key: value for key,
                         value in enumerate(request_datas['emotions'])}
         feeling = request_datas['thought']
-        ip_user = str(request.remote_addr)
+        ip_user = str(request.access_route[-1])
         timestamp_ans = datetime.datetime.now().timestamp()
         feeling = feeling.replace("'", " ")
 
