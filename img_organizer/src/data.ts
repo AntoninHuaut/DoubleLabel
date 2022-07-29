@@ -18,6 +18,9 @@ async function getImagesFIles(inputFolder: string) {
     const files = [];
     for await (const entry of walk(`${INPUT_DIR}/${inputFolder}`)) {
         if (entry.isFile) {
+            const ext = entry.name.split('.').pop()?.toLowerCase();
+            if (!['png', 'jpg', 'jpeg', 'tiff'].includes(ext ?? '')) continue;
+
             files.push(entry.name);
         }
     }

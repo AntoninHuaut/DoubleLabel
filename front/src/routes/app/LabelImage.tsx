@@ -3,12 +3,12 @@ import { showNotification } from '@mantine/notifications';
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eraser } from 'tabler-icons-react';
-import { imageIdRequest, registerAnswerRequest } from '../../api/poll_request';
+import { emotionListRequest, imageIdRequest, registerAnswerRequest } from '../../api/poll_request';
 import { useFetch } from '../../api/request';
 
 import { ButtonNumberBadger } from '../../components/template/ButtonNumberBadger';
 import { useAuth } from '../../hooks/useAuth';
-import { LABELS, randomSort } from '../../services/Labels.services';
+import { randomSort } from '../../services/Labels.services';
 
 function error(errorMsg: string) {
     showNotification({
@@ -24,23 +24,25 @@ export function LabelImage() {
 
     const [labelPriority, setLabelPriority] = useState<string[]>([]);
     const [imageId, setImageId] = useState(-1);
-    const btnLabels = useMemo(() => randomSort([...LABELS]), []);
+    const [btnLabels, setBtnLabels] = useState<string[]>([]);
 
     const [thought, setThought] = useState('');
 
     const [isTextAreaDisable, setTextAreaDisable] = useState(false);
     const [isSubmitDisable, setSubmitDisable] = useState(false);
+    const [isGlobalLoading, setGlobalLoading] = useState(false);
 
     const [waitReset, setWaitReset] = useState(false);
     const imageIdFetch = useFetch();
     const pollFetch = useFetch();
+    const emotionFetch = useFetch();
 
     const onSubmit = () => {
         setWaitReset(true);
         pollFetch.makeRequest(registerAnswerRequest({ userId: auth.user.id, imageId: imageId, emotions: labelPriority, thought }));
     };
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (pollFetch.cannotHandleResult()) return;
 
         if (pollFetch.data) {
@@ -57,7 +59,7 @@ export function LabelImage() {
         nextImage();
     }, [pollFetch.isLoading]);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (imageIdFetch.cannotHandleResult()) return;
 
         if (imageIdFetch.data) {
@@ -71,6 +73,18 @@ export function LabelImage() {
     }, [imageIdFetch.isLoading]);
 
     useEffect(() => {
+        if (emotionFetch.cannotHandleResult()) return;
+
+        if (emotionFetch.data) {
+            setBtnLabels(randomSort(emotionFetch.data.map((s: string) => s && s[0].toUpperCase() + s.slice(1))));
+        }
+
+        if (emotionFetch.error) {
+            error(emotionFetch.error.message);
+        }
+    }, [emotionFetch.isLoading]);
+
+    useEffect(() => {
         if (imageId == -2) {
             navigate('/app/thank-you');
         }
@@ -79,6 +93,7 @@ export function LabelImage() {
     const getNewImageId = () => imageIdFetch.makeRequest(imageIdRequest({ userId: auth.user.id }));
 
     useEffect(() => {
+        emotionFetch.makeRequest(emotionListRequest());
         getNewImageId();
     }, []);
 
@@ -97,6 +112,11 @@ export function LabelImage() {
     }, [labelPriority]);
 
     useEffect(() => setSubmitDisable(thought.length === 0 || labelPriority.length === 0), [thought, labelPriority]);
+
+    useEffect(
+        () => setGlobalLoading(imageIdFetch.isLoading || pollFetch.isLoading || emotionFetch.isLoading || waitReset),
+        [imageIdFetch.isLoading, pollFetch.isLoading, emotionFetch.isLoading, waitReset]
+    );
 
     return (
         <>
@@ -120,7 +140,7 @@ export function LabelImage() {
                         width: 300,
                     },
                 })}>
-                <LoadingOverlay visible={pollFetch.isLoading || imageIdFetch.isLoading || waitReset} />
+                <LoadingOverlay visible={isGlobalLoading} />
 
                 <Stack spacing="sm">
                     <Text align="center" size="xl" weight={700}>
@@ -168,7 +188,7 @@ export function LabelImage() {
                             Back
                         </Button>
                         <Group position="center">
-                            <Button onClick={onSubmit} disabled={isSubmitDisable || pollFetch.isLoading || waitReset}>
+                            <Button onClick={onSubmit} disabled={isSubmitDisable || isGlobalLoading}>
                                 Submit your choice
                             </Button>
                         </Group>

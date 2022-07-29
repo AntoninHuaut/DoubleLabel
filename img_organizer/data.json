@@ -1270,11 +1270,6 @@
         "outputPath": "../front/public/images//37829424135505950.png"
       },
       {
-        "imageId": 32611257497437452,
-        "inputPath": "input/irritated/Image Sources .txt",
-        "outputPath": "../front/public/images//32611257497437452.png"
-      },
-      {
         "imageId": 32085939805490350,
         "inputPath": "input/irritated/images - 2020-11-05T231355.374_face.png",
         "outputPath": "../front/public/images//32085939805490350.png"
@@ -2030,11 +2025,6 @@
         "imageId": 14926385736731732,
         "inputPath": "input/worried/NH_images - 2020-11-06T203912.297_face.png",
         "outputPath": "../front/public/images//14926385736731732.png"
-      },
-      {
-        "imageId": 15701837435624130,
-        "inputPath": "input/worried/Notes.txt",
-        "outputPath": "../front/public/images//15701837435624130.png"
       },
       {
         "imageId": 11471065880476684,
