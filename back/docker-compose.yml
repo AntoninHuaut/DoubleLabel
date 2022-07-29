@@ -1,0 +1,9 @@
+services:
+  doublelabel_back:
+    container_name: c_doublelabel_back
+    restart: unless-stopped
+    build: .
+    ports:
+      - "4015:5000"
+    volumes:
+      - ./database:/app/database
