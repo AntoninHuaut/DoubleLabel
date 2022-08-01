@@ -10,8 +10,8 @@ interface GlobalResultProps {
 }
 
 export function GlobalResult({ emotionObj }: GlobalResultProps) {
-    const [totalVotes, setTotalVotes] = useState(0);
-    const [totalUsers, setTotalUsers] = useState(0);
+    const [totalVotes, setTotalVotes] = useState(-1);
+    const [totalUsers, setTotalUsers] = useState(-1);
 
     const emotionFetch = useFetch({
         onData: (data: IUserStats) => setTotalUsers(data.users),
