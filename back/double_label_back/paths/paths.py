@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, render_template
 from ..data_access.insert_datas import *
-from ..data_access.get_datas import get_emotion_count, get_picture, get_emotion_list_db, get_total_score_per_emotion
+from ..data_access.get_datas import get_emotion_count, get_picture, get_emotion_list_db, get_total_score_per_emotion, get_emotion_count_pondere, get_total_score_per_picture
 import datetime
 from flask_cors import cross_origin
 
@@ -57,7 +57,7 @@ def get_survey_datas():
 @bpapi.route("/get_survey_datas_grouped", methods=['GET'])
 @cross_origin()
 def get_survey_datas_test_2():
-    result = get_emotion_count()
+    result = get_emotion_count_pondere()
     total = get_total_score_per_emotion(result)
     return jsonify(total)
 

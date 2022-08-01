@@ -29,31 +29,27 @@ def get_emotion_count():
     cursor.execute("SELECT id_image, id_emotion, emotion_name, emotion_rank, count(*) as total_per_emotion FROM DL_ANSWER\
                     JOIN DL_EMOTION_RANK using (id_answer)\
                     JOIN DL_EMOTION using (id_emotion)\
-                    GROUP BY emotion_rank, id_image;")
+                    GROUP BY emotion_name, emotion_rank,id_image;")
     
     #Gathering results
     results_list = {}
     for element in cursor.fetchall():
-        if results_list.get(element['id_image'], 404) == 404:
+        if results_list.get(element['id_image'], 404) == 404: #if the image is not in the list
             results_list[element['id_image']] = {}
             if results_list[element['id_image']].get(element['emotion_name'], 404) == 404: #if the emotion is not in the list
-                results_list[element['id_image']][element['emotion_name']] = [0,0,0,0,0,0,0,0]
-                results_list[element['id_image']][element['emotion_name']][element['emotion_rank']] = result_ponderation(element['emotion_rank'])
+                results_list[element['id_image']][element['emotion_name']] = [0,0,0,0,0,0,0,0] #initilize the list
+                results_list[element['id_image']][element['emotion_name']][element['emotion_rank']] = element['total_per_emotion']
             else :
-                results_list[element['id_image']][element['emotion_name']][element['emotion_rank']] += result_ponderation(element['emotion_rank'])
+                results_list[element['id_image']][element['emotion_name']][element['emotion_rank']] = element['total_per_emotion']
+
         else:
-            if results_list.get(element['emotion_name'], 404) == 404: #if the emotion is not in the list
-                results_list[element['id_image']][element['emotion_name']] = [0,0,0,0,0,0,0,0]
-                results_list[element['id_image']][element['emotion_name']][element['emotion_rank']] = result_ponderation(element['emotion_rank'])
-            else :
-                results_list[element['id_image']][element['emotion_name']][element['emotion_rank']] += result_ponderation(element['emotion_rank'])
+            if results_list[element['id_image']].get(element['emotion_name'], 404) == 404:
+                results_list[element['id_image']][element['emotion_name']] = [0,0,0,0,0,0,0,0] #initilize the list
+                results_list[element['id_image']][element['emotion_name']][element['emotion_rank']] = element['total_per_emotion']
+            else:
+                results_list[element['id_image']][element['emotion_name']][element['emotion_rank']] = element['total_per_emotion']
 
     return results_list
-"""if results_list.get(element['id_image'],404) == 404:
-    results_list[element['id_image']] = [{'rank':element['emotion_rank'],'id_emotion': element['id_emotion'], 'emotion_name': element['emotion_name'], 'total_per_emotion': element['total_per_emotion']}]
-    else:
-         results_list[element['id_image']].append({'rank':element['emotion_rank'],'id_emotion': element['id_emotion'], 'emotion_name': element['emotion_name'], 'total_per_emotion': element['total_per_emotion']})
-"""
 
 def get_answer_id(feeling, timestamp_ans, ip_user, id_user, id_image):
     cursor = get_db().cursor()
@@ -88,73 +84,59 @@ def get_emotion_count_pondere():
     cursor.execute("SELECT id_image, id_emotion, emotion_name, emotion_rank, count(*) as total_per_emotion FROM DL_ANSWER\
                     JOIN DL_EMOTION_RANK using (id_answer)\
                     JOIN DL_EMOTION using (id_emotion)\
-                    GROUP BY emotion_rank, id_image;")
+                    GROUP BY emotion_name, emotion_rank,id_image;")
     
     #Gathering results
     results_list = {}
     for element in cursor.fetchall():
-        if results_list.get(element['id_image'], 404) == 404:
+        if results_list.get(element['id_image'], 404) == 404: #if the image is not in the list
             results_list[element['id_image']] = {}
             if results_list[element['id_image']].get(element['emotion_name'], 404) == 404: #if the emotion is not in the list
-                results_list[element['id_image']][element['emotion_name']] = [0,0,0,0,0,0,0,0]
-                results_list[element['id_image']][element['emotion_name']][element['emotion_rank']] = result_ponderation(element['emotion_rank'])
+                results_list[element['id_image']][element['emotion_name']] = [0,0,0,0,0,0,0,0] #initilize the list
+                results_list[element['id_image']][element['emotion_name']][element['emotion_rank']] = element['total_per_emotion']
             else :
-                results_list[element['id_image']][element['emotion_name']][element['emotion_rank']] += result_ponderation(element['emotion_rank'])
+                results_list[element['id_image']][element['emotion_name']][element['emotion_rank']] = element['total_per_emotion']
+
         else:
-            if results_list.get(element['emotion_name'], 404) == 404: #if the emotion is not in the list
-                results_list[element['id_image']][element['emotion_name']] = [0,0,0,0,0,0,0,0]
-                results_list[element['id_image']][element['emotion_name']][element['emotion_rank']] = result_ponderation(element['emotion_rank'])
-            else :
-                results_list[element['id_image']][element['emotion_name']][element['emotion_rank']] += result_ponderation(element['emotion_rank'])
+            if results_list[element['id_image']].get(element['emotion_name'], 404) == 404:
+                results_list[element['id_image']][element['emotion_name']] = [0,0,0,0,0,0,0,0] #initilize the list
+                results_list[element['id_image']][element['emotion_name']][element['emotion_rank']] = element['total_per_emotion']
+            else:
+                results_list[element['id_image']][element['emotion_name']][element['emotion_rank']] = element['total_per_emotion']
 
     return results_list
 
 def get_total_score_per_emotion(result):
     emotion_scores_per_image = {}
     for element in result.keys():
-        emotion_scores_per_image[element] = get_emotions_size(result[element])
+        emotion_scores_per_image[element] = get_emotions_total(result[element])
     return emotion_scores_per_image
 
-def get_emotions_size(emotion_list):
-    print(emotion_list)
-    emotion_size = {}
-    for emotion in emotion_list.keys():
-        if(emotion_size.get(emotion, 404) == 404):
-            emotion_size[emotion] = sum_scores(emotion_list[emotion])
+def get_emotions_total(scores):
+    total_per_emotion = {}
+    for element in scores.keys():
+        total_per_emotion[element] = 0 
+        for index, number in enumerate(scores[element]):
+            total_per_emotion[element] += result_ponderation(index, int(number))    
 
-    return emotion_size
+    return total_per_emotion
 
-def sum_scores(scores):
-    print(scores)
-    total = 0
-    for element in scores:
-        total += element
-    print(total)
-    return total
-
-
-def result_ponderation(rank):
+def result_ponderation(rank, total_per_emotion=1):
     match rank:
         case 0:
-            return 11
+            return 8 * total_per_emotion
         case 1:
-            return 10
+            return 7 * total_per_emotion
         case 2:
-            return 9
+            return 6 * total_per_emotion
         case 3:
-            return 8
+            return 5 * total_per_emotion
         case 4:
-            return 7
+            return 4 * total_per_emotion
         case 5:
-            return 6
+            return 3 * total_per_emotion
         case 6:
-            return 5
+            return 2 * total_per_emotion
         case 7:
-            return 4
-        case 8:
-            return 3
-        case 9:
-            return 2
-        case 10:
-            return 1
+            return 1 * total_per_emotion
     return 0
