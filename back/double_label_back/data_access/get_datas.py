@@ -111,3 +111,8 @@ def result_ponderation(rank, total_per_emotion=1):
         case 7:
             return 0.5 * total_per_emotion
     return 0
+
+def get_user_count():
+    cursor = get_db().cursor()
+    cursor.execute("SELECT distinct id_user FROM DL_ANSWER")
+    return len(cursor.fetchall())
