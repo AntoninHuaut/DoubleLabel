@@ -21,27 +21,30 @@ const COLORS = (opacity: number) => [
 
 interface ResultEntryPieProps {
     pieCount: number;
-    emotionNameObj: IEmotionType;
+    emotionObj: IEmotionType;
     emotionsList: string[];
 }
 
-export function ResultEntryPie({ pieCount, emotionNameObj, emotionsList }: ResultEntryPieProps) {
+export function ResultEntryPie({ pieCount, emotionObj, emotionsList }: ResultEntryPieProps) {
     const labels = [];
     const data = [];
 
-    const title = pieCount === 0 ? 'All emotion votes [ranking ignored]' : `Emotion votes at rank #${pieCount}`;
+    const title = pieCount === 0 ? 'All emotion votes [points ranking]' : `Emotion votes at rank #${pieCount}`;
 
     if (pieCount === 0) {
         for (const emotion of emotionsList) {
-            if (emotion in emotionNameObj) {
-                labels.push(emotion);
-                data.push(emotionNameObj[emotion].reduce((a, b) => a + b));
+            if (emotion in emotionObj.points) {
+                const value = emotionObj.points[emotion];
+                if (value > 0) {
+                    labels.push(emotion);
+                    data.push(value);
+                }
             }
         }
     } else {
         for (const emotion of emotionsList) {
-            if (emotion in emotionNameObj) {
-                const value = emotionNameObj[emotion][pieCount];
+            if (emotion in emotionObj.ranks) {
+                const value = emotionObj.ranks[emotion][pieCount - 1];
                 if (value > 0) {
                     labels.push(emotion);
                     data.push(value);
@@ -72,19 +75,18 @@ export function ResultEntryPie({ pieCount, emotionNameObj, emotionsList }: Resul
                         plugins={[ChartDataLabels]}
                         options={{
                             maintainAspectRatio: false,
+                            animation: false,
                             plugins: {
                                 legend: {
                                     display: false,
                                 },
                                 datalabels: {
-                                    font: {
-                                        size: 14,
-                                    },
                                     formatter: function (value: any, context: any) {
                                         const emotionLabel = context.chart.data.labels[context.dataIndex];
                                         if (!emotionLabel) return 'No data';
 
-                                        return emotionLabel[0].toUpperCase() + emotionLabel.slice(1);
+                                        const valueStr = ('(' + value).padStart(Math.round(emotionLabel.length / 2 + 2), ' ') + ')';
+                                        return emotionLabel[0].toUpperCase() + emotionLabel.slice(1) + `\n${valueStr}`;
                                     },
                                 },
                             },

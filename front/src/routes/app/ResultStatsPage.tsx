@@ -1,11 +1,13 @@
-import { Center, Grid, MultiSelect, Space } from '@mantine/core';
-import { ResultEntry } from '../../components/template/ResultEntry';
-import { useFetch } from '../../api/request';
+import { Button, Center, Collapse, Grid, Group, List, MultiSelect, Space, Stack, Text, Title } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import { statsRequest } from '../../api/stats_request';
-import { IEmotionType, IStatsType } from '../../types/StatsType';
-import { errorNotif } from '../../services/Notification.services';
+
 import { emotionListRequest } from '../../api/poll_request';
+import { useFetch } from '../../api/request';
+import { imageStatsRequest } from '../../api/stats_request';
+import { GlobalResult } from '../../components/template/GlobalResult';
+import { ResultEntry } from '../../components/template/ResultEntry';
+import { errorNotif } from '../../services/Notification.services';
+import { IEmotionType, IStatsType } from '../../types/StatsType';
 
 const emotions = [
     { value: 'worried', label: 'Worried', group: 'Fear' },
@@ -16,8 +18,12 @@ const emotions = [
 
 export function ResultStatsPage() {
     const [statsList, setStatsList] = useState<IStatsType>({});
+    const [statsListFiltered, setStatsListFiltered] = useState<[string, IEmotionType][]>([]);
+
     const [emotionsList, setEmotionsList] = useState<string[]>([]);
     const [selectedEmotions, setSelectedEmotions] = useState<string[]>([]);
+
+    const [helpOpened, setHelpOpened] = useState(false);
 
     const emotionFetch = useFetch({
         onData: (data) => setEmotionsList(data.sort((a: string, b: string) => a.localeCompare(b))),
@@ -31,12 +37,22 @@ export function ResultStatsPage() {
 
     useEffect(() => {
         emotionFetch.makeRequest(emotionListRequest());
-        statsFetch.makeRequest(statsRequest());
+        statsFetch.makeRequest(imageStatsRequest());
     }, []);
+
+    useEffect(() => {
+        setStatsListFiltered(
+            Object.entries(statsList).filter(
+                ([_, emotionObj]: [string, IEmotionType]) => selectedEmotions.length === 0 || selectedEmotions.includes(emotionObj.emotion)
+            )
+        );
+    }, [selectedEmotions, statsList]);
 
     return (
         <>
-            <Center>
+            <Group position={'apart'}>
+                <Button onClick={() => setHelpOpened((o) => !o)}>Toggle help</Button>
+
                 <MultiSelect
                     size="md"
                     value={selectedEmotions}
@@ -51,22 +67,43 @@ export function ResultStatsPage() {
                     transition="pop-top-left"
                     transitionTimingFunction="ease"
                 />
-            </Center>
 
-            {/* TODO global resumate */}
+                <Space w={132} />
+            </Group>
+
+            <GlobalResult emotionObj={statsListFiltered} />
+
+            <Collapse mt="md" in={helpOpened}>
+                <Title align="center" order={3}>
+                    Ranking by points
+                </Title>
+                <Text align="center">
+                    The ranking by point allows to visualize all the votes of an image by taking into account the rank voted by the user.
+                </Text>
+                <Center>
+                    <List center>
+                        <List.Item>Rank 1: 4 points</List.Item>
+                        <List.Item>Rank 2: 3.5 points</List.Item>
+                        <List.Item>Rank 3: 3 points</List.Item>
+                        <List.Item>Rank 4: 2.5 points</List.Item>
+                        <List.Item>Rank 5: 2 points</List.Item>
+                        <List.Item>Rank 6: 1.5 point</List.Item>
+                        <List.Item>Rank 7: 1 point</List.Item>
+                        <List.Item>Rank 8: 0.5 point</List.Item>
+                    </List>
+                </Center>
+            </Collapse>
 
             <Space h="xl" />
 
             <Grid>
-                {Object.entries(statsList)
-                    // .filter(([_, emotionNameObj]: [string, IEmotionType]) => selectedEmotions.includes(emotionNameObj.emotion)) // TODO WIP
-                    .map(([imageId, emotionNameObj]: [string, IEmotionType], index) => {
-                        return (
-                            <Grid.Col key={index} xs={12} sm={6} md={6} lg={4} xl={3}>
-                                <ResultEntry imageId={imageId} emotionNameObj={emotionNameObj} emotionsList={emotionsList} />
-                            </Grid.Col>
-                        );
-                    })}
+                {statsListFiltered.map(([imageId, emotionObj]: [string, IEmotionType], index) => {
+                    return (
+                        <Grid.Col key={index} xs={12} sm={6} md={6} lg={4} xl={3}>
+                            <ResultEntry imageId={imageId} emotionObj={emotionObj} emotionsList={emotionsList} />
+                        </Grid.Col>
+                    );
+                })}
             </Grid>
         </>
     );
