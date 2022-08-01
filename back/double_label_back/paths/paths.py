@@ -1,6 +1,6 @@
-from flask import Blueprint, request, jsonify, render_template
+from flask import Blueprint, request, jsonify
 from ..data_access.insert_datas import *
-from ..data_access.get_datas import get_emotion_count, get_picture, get_emotion_list_db, get_total_score_per_emotion, get_emotion_count_pondere, get_total_score_per_picture
+from ..data_access.get_datas import get_emotion_count, get_picture, get_emotion_list_db, get_total_score_per_emotion, get_emotion_count_pondere
 import datetime
 from flask_cors import cross_origin
 

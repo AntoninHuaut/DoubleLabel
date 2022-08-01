@@ -124,19 +124,19 @@ def get_emotions_total(scores):
 def result_ponderation(rank, total_per_emotion=1):
     match rank:
         case 0:
-            return 8 * total_per_emotion
-        case 1:
-            return 7 * total_per_emotion
-        case 2:
-            return 6 * total_per_emotion
-        case 3:
-            return 5 * total_per_emotion
-        case 4:
             return 4 * total_per_emotion
-        case 5:
+        case 1:
+            return 3.5 * total_per_emotion
+        case 2:
             return 3 * total_per_emotion
-        case 6:
+        case 3:
+            return 2.5 * total_per_emotion
+        case 4:
             return 2 * total_per_emotion
-        case 7:
+        case 5:
+            return 1.5 * total_per_emotion
+        case 6:
             return 1 * total_per_emotion
+        case 7:
+            return 0.5 * total_per_emotion
     return 0
