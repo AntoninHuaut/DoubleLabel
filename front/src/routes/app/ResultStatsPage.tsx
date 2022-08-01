@@ -1,4 +1,4 @@
-import { Button, Center, Collapse, Grid, Group, List, MultiSelect, Space, Stack, Text, Title } from '@mantine/core';
+import { Button, Center, Collapse, Grid, Group, List, LoadingOverlay, MultiSelect, Space, Stack, Text, Title } from '@mantine/core';
 import { useEffect, useState } from 'react';
 
 import { emotionListRequest } from '../../api/poll_request';
@@ -97,6 +97,8 @@ export function ResultStatsPage() {
             <Space h="xl" />
 
             <Grid>
+                <LoadingOverlay visible={statsFetch.isLoading} />
+
                 {statsListFiltered.map(([imageId, emotionObj]: [string, IEmotionType], index) => {
                     return (
                         <Grid.Col key={index} xs={12} sm={6} md={6} lg={4} xl={3}>

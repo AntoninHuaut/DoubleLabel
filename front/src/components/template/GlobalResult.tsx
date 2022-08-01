@@ -1,4 +1,4 @@
-import { Text } from '@mantine/core';
+import { Center, Loader, Text } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { useFetch } from '../../api/request';
 import { IEmotionType, IUserStats } from '../../types/StatsType';
@@ -13,13 +13,13 @@ export function GlobalResult({ emotionObj }: GlobalResultProps) {
     const [totalVotes, setTotalVotes] = useState(-1);
     const [totalUsers, setTotalUsers] = useState(-1);
 
-    const emotionFetch = useFetch({
+    const userStatsFetch = useFetch({
         onData: (data: IUserStats) => setTotalUsers(data.users),
         onError: (error) => errorNotif(error.message),
     });
 
     useEffect(() => {
-        emotionFetch.makeRequest(userStatsRequest());
+        userStatsFetch.makeRequest(userStatsRequest());
     }, []);
 
     useEffect(() => {
@@ -35,9 +35,15 @@ export function GlobalResult({ emotionObj }: GlobalResultProps) {
 
     return (
         <>
-            <Text mt="sm" align="center">
-                Total votes: {totalVotes} | Total unique users: {totalUsers}
-            </Text>
+            {userStatsFetch.isLoading || totalUsers === -1 || totalVotes === -1 ? (
+                <Center mt="sm">
+                    <Loader />
+                </Center>
+            ) : (
+                <Text mt="sm" align="center">
+                    Total votes: {totalVotes} | Total unique users: {totalUsers}
+                </Text>
+            )}
         </>
     );
 }
