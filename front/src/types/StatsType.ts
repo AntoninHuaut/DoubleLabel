@@ -1,9 +1,13 @@
 export interface IEmotionType {
-    // emotion: string;
-    // guess: { [emotionName: string]: number[] };
-    [emotionName: string]: number[];
+    emotion: string;
+    ranks: { [emotionName: string]: number[] };
+    points: { [emotionName: string]: number };
 }
 
 export interface IStatsType {
     [imageId: number]: IEmotionType;
+}
+
+export interface IUserStats {
+    users: number;
 }

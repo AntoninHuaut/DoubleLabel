@@ -6,11 +6,11 @@ import { ResultEntryPie } from './ResultEntryPie';
 
 interface ResultEntryProps {
     imageId: string;
-    emotionNameObj: IEmotionType;
+    emotionObj: IEmotionType;
     emotionsList: string[];
 }
 
-export function ResultEntry({ imageId, emotionNameObj, emotionsList }: ResultEntryProps) {
+export function ResultEntry({ imageId, emotionObj, emotionsList }: ResultEntryProps) {
     const [pieCount, setPieCount] = useState(0);
     const minPieCount = 0;
     const maxPieCount = emotionsList.length;
@@ -43,18 +43,18 @@ export function ResultEntry({ imageId, emotionNameObj, emotionsList }: ResultEnt
                 <Avatar mx="auto" size={92} src={`/images/${imageId}.png`} radius="md" />
 
                 <Text align="center" size="xs">
-                    # TODO Real Emotion #
+                    {emotionObj.emotion}
                 </Text>
                 <Text align="center" size="xs" mb="xs">
                     #{imageId}
                 </Text>
 
-                <ResultEntryPie emotionNameObj={emotionNameObj} emotionsList={emotionsList} pieCount={pieCount} />
+                <ResultEntryPie emotionObj={emotionObj} emotionsList={emotionsList} pieCount={pieCount} />
 
                 <Center mt="md">
                     <Group>
                         <Button variant="default" disabled={pieCount === minPieCount} onClick={decrementPieCount} compact sx={{ width: 110 }}>
-                            <Text>{pieCount === minPieCount ? 'N/A' : pieCount === 1 ? 'All votes' : `Ranking #${pieCount - 1}`}</Text>
+                            <Text>{pieCount === minPieCount ? 'N/A' : pieCount === 1 ? 'Points ranking' : `Ranking #${pieCount - 1}`}</Text>
                         </Button>
                         <Button variant="default" disabled={pieCount === maxPieCount} onClick={incrementPieCount} compact sx={{ width: 110 }}>
                             <Text>{pieCount === maxPieCount ? 'N/A' : `Ranking #${pieCount + 1}`}</Text>
