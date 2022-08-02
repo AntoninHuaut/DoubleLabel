@@ -2,6 +2,9 @@
 import os
 from double_label_back import create_app
 from flask_cors import CORS
+from dotenv import load_dotenv
+
+load_dotenv('.env')
 
 app = create_app(debug=True)
 

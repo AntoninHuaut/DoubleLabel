@@ -5,7 +5,7 @@ DATA_URL = "./database/double_label_db.db"
 
 def get_db():
     if 'db' not in g:
-        print("creating connection" + DATA_URL)
+        #print("creating connection" + DATA_URL)
         g.db = sqlite3.connect(DATA_URL)
         g.db.row_factory = sqlite3.Row
 
