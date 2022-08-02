@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Eraser } from 'tabler-icons-react';
 
 import { emotionListRequest, imageIdRequest, labedImageRequest, registerAnswerRequest } from '../../api/poll_request';
-import { useFetch } from '../../api/request';
+import { useFetch } from '../../hooks/useFetch';
 import { ButtonNumberBadger } from '../../components/template/ButtonNumberBadger';
 import { useAuth } from '../../hooks/useAuth';
 import { useCaptcha } from '../../hooks/useCaptcha';

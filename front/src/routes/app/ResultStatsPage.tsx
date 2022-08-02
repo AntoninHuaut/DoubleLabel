@@ -2,7 +2,7 @@ import { Button, Center, Collapse, Grid, Group, List, LoadingOverlay, MultiSelec
 import { useEffect, useState } from 'react';
 
 import { emotionListRequest } from '../../api/poll_request';
-import { useFetch } from '../../api/request';
+import { useFetch } from '../../hooks/useFetch';
 import { imageStatsRequest } from '../../api/stats_request';
 import { GlobalResult } from '../../components/template/GlobalResult';
 import { ResultEntry } from '../../components/template/ResultEntry';

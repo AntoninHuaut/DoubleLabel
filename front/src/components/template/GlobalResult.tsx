@@ -1,6 +1,6 @@
 import { Center, Loader, Text } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import { useFetch } from '../../api/request';
+import { useFetch } from '../../hooks/useFetch';
 import { IEmotionType, IUserStats } from '../../types/StatsType';
 import { userStatsRequest } from '../../api/stats_request';
 import { errorNotif } from '../../services/Notification.services';
