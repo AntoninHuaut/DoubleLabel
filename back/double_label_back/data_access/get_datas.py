@@ -1,3 +1,4 @@
+from numpy import cumprod
 from .db_access import *
 import random
 id_images = []
@@ -116,3 +117,8 @@ def get_user_count():
     cursor = get_db().cursor()
     cursor.execute("SELECT distinct id_user FROM DL_ANSWER")
     return {"users":len(cursor.fetchall())}
+
+def get_picture_seen_count(id_user):
+    cursor = get_db().cursor()
+    cursor.execute("SELECT count(*) as total from DL_ANSWER where id_user ='%s'"%(id_user))
+    return cursor.fetchone()['total']
