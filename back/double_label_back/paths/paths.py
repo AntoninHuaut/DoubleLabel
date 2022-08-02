@@ -80,4 +80,5 @@ def get_picture_count():
         #TEST
         id_user = '5e3ef928-c8f7-42cb-a5f5-156651fb8715'
         total_pictures_seen = get_picture_seen_count(id_user)
+        print(type(total_pictures_seen))
         return jsonify({"pictures_count":total_pictures_seen})
