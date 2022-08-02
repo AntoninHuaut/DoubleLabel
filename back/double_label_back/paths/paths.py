@@ -85,4 +85,4 @@ def is_human(captcha_response, ip_user):
     payload = {'response': captcha_response, 'secret': os.environ.get('RECAPTCHA_SERVER_SECRET') ,'remoteip':ip_user }
     response = post("https://www.google.com/recaptcha/api/siteverify", data=payload)
     response_text = json.loads(response.text)
-    return response_text['score'] >= float(os.environ.get('MIN_RECAPTCHA_STORE'))
+    return response_text['success'] and response_text['score'] >= float(os.environ.get('MIN_RECAPTCHA_STORE'))
