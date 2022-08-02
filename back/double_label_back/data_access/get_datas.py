@@ -1,4 +1,3 @@
-from numpy import cumprod
 from .db_access import *
 import random
 id_images = []
