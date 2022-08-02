@@ -66,19 +66,12 @@ def get_emotion_list():
     result = get_emotion_list_db()
     return jsonify(result)
 
-@bpapi.route("/get_picture_count", methods=['GET','POST'])
+@bpapi.route("/get_picture_count", methods=['POST'])
 @cross_origin()
 def get_picture_count():
-    if request.method == 'POST':
-        # Get / parse datas
-        request_datas = request.get_json()
-        id_user = request_datas['userId']
+    # Get / parse datas
+    request_datas = request.get_json()
+    id_user = request_datas['userId']
 
-        total_pictures_seen = get_picture_seen_count(id_user)
-        return jsonify(total_pictures_seen)
-    else:
-        #TEST
-        id_user = '5e3ef928-c8f7-42cb-a5f5-156651fb8715'
-        total_pictures_seen = get_picture_seen_count(id_user)
-        print(type(total_pictures_seen))
-        return jsonify({"pictures_count":total_pictures_seen})
+    total_pictures_seen = get_picture_seen_count(id_user)
+    return jsonify({"pictures_count": total_pictures_seen})

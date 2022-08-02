@@ -1,4 +1,4 @@
-import { IImageIdRequest, IRequestAnswerRequest } from '../types/FormType';
+import { IImageIdRequest, ILabedImagedRequest, IRequestAnswerRequest } from '../types/FormType';
 import { BASE_API_URL, HttpMethod, mergeFetchOptions } from './request';
 
 export const registerAnswerRequest = (body: IRequestAnswerRequest) => {
@@ -19,5 +19,12 @@ export const emotionListRequest = () => {
     return {
         url: `${BASE_API_URL}/get_emotion_list`,
         options: mergeFetchOptions({ method: HttpMethod.GET }),
+    };
+};
+
+export const labedImageRequest = (body: ILabedImagedRequest) => {
+    return {
+        url: `${BASE_API_URL}/get_picture_count`,
+        options: mergeFetchOptions({ method: HttpMethod.POST, body: JSON.stringify(body) }),
     };
 };

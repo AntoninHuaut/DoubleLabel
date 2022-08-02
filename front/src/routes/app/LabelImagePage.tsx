@@ -3,12 +3,13 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eraser } from 'tabler-icons-react';
 
-import { emotionListRequest, imageIdRequest, registerAnswerRequest } from '../../api/poll_request';
+import { emotionListRequest, imageIdRequest, labedImageRequest, registerAnswerRequest } from '../../api/poll_request';
 import { useFetch } from '../../api/request';
 import { ButtonNumberBadger } from '../../components/template/ButtonNumberBadger';
 import { useAuth } from '../../hooks/useAuth';
 import { randomSort } from '../../services/Labels.services';
 import { errorNotif, successNotif } from '../../services/Notification.services';
+import { ILabedImagedResponse } from '../../types/FormType';
 
 export function LabelImagePage() {
     const auth = useAuth();
@@ -16,6 +17,7 @@ export function LabelImagePage() {
 
     const [labelPriority, setLabelPriority] = useState<string[]>([]);
     const [imageId, setImageId] = useState(-1);
+    const [labeledImage, setLabeledImage] = useState(-1);
     const [btnLabels, setBtnLabels] = useState<string[]>([]);
 
     const [thought, setThought] = useState('');
@@ -28,6 +30,11 @@ export function LabelImagePage() {
 
     const emotionFetch = useFetch({
         onData: (data) => setBtnLabels(randomSort(data.map((s: string) => s && s[0].toUpperCase() + s.slice(1)))),
+        onError: (err) => errorNotif(err.message),
+    });
+
+    const labedImageFetch = useFetch({
+        onData: (data: ILabedImagedResponse) => setLabeledImage(data.pictures_count),
         onError: (err) => errorNotif(err.message),
     });
 
@@ -52,9 +59,12 @@ export function LabelImagePage() {
 
     const getNewImageId = () => imageIdFetch.makeRequest(imageIdRequest({ userId: auth.user.id }));
 
+    const getLabedImage = () => labedImageFetch.makeRequest(labedImageRequest({ userId: auth.user.id }));
+
     useEffect(() => {
         emotionFetch.makeRequest(emotionListRequest());
         getNewImageId();
+        getLabedImage();
     }, []);
 
     useEffect(
@@ -76,6 +86,7 @@ export function LabelImagePage() {
     const resetPriority = () => setLabelPriority([]);
     const nextImage = async () => {
         await getNewImageId();
+        await getLabedImage();
         resetPriority();
         setThought('');
     };
@@ -114,9 +125,24 @@ export function LabelImagePage() {
                 <LoadingOverlay visible={isGlobalLoading} />
 
                 <Stack spacing="sm">
-                    <Avatar size={256} src={`/images/${imageId}.png`} radius={0} mx="auto" mb="sm" />
+                    {labeledImage >= 0 && (
+                        <Text align="center" size="sm">
+                            {labeledImage > 0 ? `You have labelled ${labeledImage} image${labeledImage == 1 ? '' : 's'}` : 'You have not labelled an image'}
+                        </Text>
+                    )}
 
-                    <Stack spacing={0}>
+                    <Avatar size={256} src={`/images/${imageId}.png`} radius={0} mx="auto" />
+
+                    <Stack spacing={0} align="center">
+                        <Text size="sm" color="dimmed" sx={{ fontStyle: 'italic' }}>
+                            Choose in order of priority (1 = strongest) the emotion(s) associated with this face.
+                        </Text>
+                        <Text size="sm" color="dimmed" sx={{ fontStyle: 'italic' }}>
+                            You don't have to rank all the emotions. Choose the emotions that you think correspond to the face.
+                        </Text>
+                    </Stack>
+
+                    <Stack mt="sm" spacing={0}>
                         <Group spacing={0} position="center">
                             {btnLabels.map((el, index) => (
                                 <ButtonNumberBadger key={index} value={el} labelPriority={labelPriority} setLabelPriority={setLabelPriority} />

@@ -8,3 +8,11 @@ export interface IRequestAnswerRequest {
 export interface IImageIdRequest {
     userId: string;
 }
+
+export interface ILabedImagedRequest {
+    userId: string;
+}
+
+export interface ILabedImagedResponse {
+    pictures_count: number;
+}
