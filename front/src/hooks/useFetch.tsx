@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-
 interface UseFetchParameter {
-    onData?: (servData: any) => any;
-    onError?: (servError: any) => any;
-    onAfterRequest?: () => any;
+    onError?: (servError: any) => any; // Error
+
+    onData?: (servData: any) => any; // No error with data
+    onNoData?: () => any; // No error with no data
+
+    onAfterRequest?: () => any; // Always called after request
 }
 
 export const useFetch = (params: UseFetchParameter) => {
@@ -67,8 +69,14 @@ export const useFetch = (params: UseFetchParameter) => {
             params.onData(data);
         }
 
-        if (error && params.onError) {
-            params.onError(error);
+        if (error) {
+            if (params.onError) {
+                params.onError(error);
+            }
+        } else {
+            if (params.onNoData) {
+                params.onNoData();
+            }
         }
 
         if (params.onAfterRequest) {

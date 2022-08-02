@@ -48,7 +48,7 @@ def register_answer():
                             timestamp_ans, id_image, emotion_list)
             return jsonify()
         else : 
-            response = jsonify({'message': "Invalid captcha or captcha score is too low"})
+            response = jsonify({'status': 400, 'message': "Invalid captcha or captcha score is too low"})
             response.status_code = 400
             return response
 
