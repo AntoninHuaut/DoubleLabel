@@ -1,6 +1,10 @@
 # double_label back
-Create the python environment :
-
+Create the python environment once by running the following commands :
+```shell
 pip install virtualenv
 python -m virtualenv env
-launch : double_label_back_dev.bat
+```
+Launch the programm by running : 
+```shell
+double_label_back_dev.bat
+```
