@@ -7,9 +7,11 @@ import { emotionListRequest, imageIdRequest, labedImageRequest, registerAnswerRe
 import { useFetch } from '../../api/request';
 import { ButtonNumberBadger } from '../../components/template/ButtonNumberBadger';
 import { useAuth } from '../../hooks/useAuth';
+import { useCaptcha } from '../../hooks/useCaptcha';
 import { randomSort } from '../../services/Labels.services';
 import { errorNotif, successNotif } from '../../services/Notification.services';
 import { ILabedImagedResponse } from '../../types/FormType';
+import { CaptchaAction } from '../../types/CaptchaType';
 
 export function LabelImagePage() {
     const auth = useAuth();
@@ -72,10 +74,13 @@ export function LabelImagePage() {
         [imageIdFetch.isLoading, pollFetch.isLoading, emotionFetch.isLoading, waitReset, btnLabels]
     );
 
-    const onSubmit = () => {
+    const onSubmit = useCaptcha(CaptchaAction.RegisterAnswer, (captcha: string) => {
         setWaitReset(true);
-        pollFetch.makeRequest(registerAnswerRequest({ userId: auth.user.id, imageId: imageId, emotions: labelPriority.map((s) => s.toLowerCase()), thought }));
-    };
+        pollFetch.makeRequest(
+            registerAnswerRequest({ userId: auth.user.id, imageId: imageId, emotions: labelPriority.map((s) => s.toLowerCase()), thought }, captcha)
+        );
+        onSubmit(false);
+    });
 
     useEffect(() => {
         if (imageId == -2) {
@@ -181,7 +186,7 @@ export function LabelImagePage() {
                             Back
                         </Button>
                         <Group position="center">
-                            <Button onClick={onSubmit} disabled={isSubmitDisable || isGlobalLoading}>
+                            <Button onClick={() => onSubmit(true)} disabled={isSubmitDisable || isGlobalLoading}>
                                 Submit your choice
                             </Button>
                         </Group>
