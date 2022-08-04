@@ -27,12 +27,12 @@ export function ResultStatsPage() {
 
     const emotionFetch = useFetch({
         onData: (data) => setEmotionsList(data.sort((a: string, b: string) => a.localeCompare(b))),
-        onError: (error) => errorNotif(error.message),
+        onError: (error) => errorNotif({ message: error.message }),
     });
 
     const statsFetch = useFetch({
         onData: (data) => setStatsList(data),
-        onError: (error) => errorNotif(error.message),
+        onError: (error) => errorNotif({ message: error.message }),
     });
 
     useEffect(() => {

@@ -15,7 +15,7 @@ export function GlobalResult({ emotionObj }: GlobalResultProps) {
 
     const userStatsFetch = useFetch({
         onData: (data: IUserStats) => setTotalUsers(data.users),
-        onError: (error) => errorNotif(error.message),
+        onError: (error) => errorNotif({ message: error.message }),
     });
 
     useEffect(() => {

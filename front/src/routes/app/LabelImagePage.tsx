@@ -24,20 +24,19 @@ export function LabelImagePage() {
 
     const [thought, setThought] = useState('');
 
-    const [isTextAreaDisable, setTextAreaDisable] = useState(false);
-    const [isSubmitDisable, setSubmitDisable] = useState(false);
+    const [isAtLeastOneLabelSelected, setAtLeastOneLabelSelected] = useState(false);
     const [isGlobalLoading, setGlobalLoading] = useState(false);
 
     const [waitReset, setWaitReset] = useState(true);
 
     const emotionFetch = useFetch({
         onData: (data) => setBtnLabels(randomSort(data.map((s: string) => s && s[0].toUpperCase() + s.slice(1)))),
-        onError: (err) => errorNotif(err.message),
+        onError: (err) => errorNotif({ message: err.message }),
     });
 
     const labedImageFetch = useFetch({
         onData: (data: ILabedImagedResponse) => setLabeledImage(data.pictures_count),
-        onError: (err) => errorNotif(err.message),
+        onError: (err) => errorNotif({ message: err.message }),
     });
 
     const imageIdFetch = useFetch({
@@ -45,16 +44,16 @@ export function LabelImagePage() {
             setImageId(data.id);
             setWaitReset(false);
         },
-        onError: (err) => errorNotif(err.message),
+        onError: (err) => errorNotif({ message: err.message }),
     });
 
     const pollFetch = useFetch({
         onData: () => {
-            successNotif('Successfully registered answer');
+            successNotif({ message: 'Successfully registered answer' });
             nextImage();
         },
         onError: (err) => {
-            errorNotif(err.message);
+            errorNotif({ message: err.message });
             setWaitReset(false);
         },
     });
@@ -82,6 +81,15 @@ export function LabelImagePage() {
         onSubmit(false);
     });
 
+    const onTrySubmit = () => {
+        if (thought.trim().length === 0) {
+            errorNotif({ title: 'Invalid form', message: 'Please type your feeling', autoClose: 3000 });
+            return;
+        }
+
+        onSubmit(true);
+    };
+
     useEffect(() => {
         if (imageId == -2) {
             navigate('/app/thank-you');
@@ -97,13 +105,11 @@ export function LabelImagePage() {
     };
 
     useEffect(() => {
-        setTextAreaDisable(labelPriority.length === 0);
+        setAtLeastOneLabelSelected(labelPriority.length > 0);
         if (labelPriority.length === 0) {
             setThought('');
         }
     }, [labelPriority]);
-
-    useEffect(() => setSubmitDisable(thought.length === 0 || labelPriority.length === 0), [thought, labelPriority]);
 
     return (
         <>
@@ -177,7 +183,7 @@ export function LabelImagePage() {
                         radius="lg"
                         value={thought}
                         onChange={(event) => setThought(event.currentTarget.value)}
-                        disabled={isTextAreaDisable}
+                        disabled={!isAtLeastOneLabelSelected}
                         required
                     />
 
@@ -186,7 +192,7 @@ export function LabelImagePage() {
                             Back
                         </Button>
                         <Group position="center">
-                            <Button onClick={() => onSubmit(true)} disabled={isSubmitDisable || isGlobalLoading}>
+                            <Button onClick={onTrySubmit} disabled={!isAtLeastOneLabelSelected || isGlobalLoading}>
                                 Submit your choice
                             </Button>
                         </Group>
