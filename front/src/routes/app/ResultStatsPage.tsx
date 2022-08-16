@@ -8,6 +8,7 @@ import { GlobalResult } from '../../components/template/GlobalResult';
 import { ResultEntry } from '../../components/template/ResultEntry';
 import { errorNotif } from '../../services/Notification.services';
 import { IEmotionType, IStatsType } from '../../types/StatsType';
+import { ResultGroupEmotion } from '../../components/template/ResultGroupEmotion';
 
 const emotions = [
     { value: 'worried', label: 'Worried', group: 'Fear' },
@@ -93,6 +94,10 @@ export function ResultStatsPage() {
                     </List>
                 </Center>
             </Collapse>
+
+            <Space h="xl" />
+
+            <ResultGroupEmotion stats={statsListFiltered} />
 
             <Space h="xl" />
 
